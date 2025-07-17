@@ -24,15 +24,19 @@
             <!-- 전사/번역 탭 -->
             <div id="transcription" class="tab-content active">
                 <div class="input-section">
-                    <h2>Enter DNA Sequence</h2>
+                    <h2>Enter Sequence</h2>
                     <div class="strand-selector">
                         <label class="radio-container">
                             <input type="radio" name="strand" value="coding" checked>
-                            <span class="radio-label">Coding Strand (5' → 3')</span>
+                            <span class="radio-label">Coding DNA (5' → 3')</span>
                         </label>
                         <label class="radio-container">
                             <input type="radio" name="strand" value="template">
-                            <span class="radio-label">Template Strand (3' → 5')</span>
+                            <span class="radio-label">Template DNA (3' → 5')</span>
+                        </label>
+                        <label class="radio-container">
+                            <input type="radio" name="strand" value="mrna">
+                            <span class="radio-label">mRNA (5' → 3')</span>
                         </label>
                     </div>
                     <textarea id="dna-input" placeholder="Enter DNA sequence (e.g., ATGGAATAG)" class="dna-input"></textarea>

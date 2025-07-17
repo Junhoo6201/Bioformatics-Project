@@ -38,6 +38,25 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     });
 });
 
+// 전사/번역 strand 타입 변경 시 placeholder 업데이트
+document.querySelectorAll('input[name="strand"]').forEach(radio => {
+    radio.addEventListener('change', (e) => {
+        const input = document.getElementById('dna-input');
+        
+        switch(e.target.value) {
+            case 'coding':
+                input.placeholder = 'Enter coding DNA sequence (e.g., ATGGAATAG)';
+                break;
+            case 'template':
+                input.placeholder = 'Enter template DNA sequence (e.g., CTATTCCAT)';
+                break;
+            case 'mrna':
+                input.placeholder = 'Enter mRNA sequence (e.g., AUGGAAUAG)';
+                break;
+        }
+    });
+});
+
 // 돌연변이 타입 선택 시 추가 입력 필드 표시
 document.getElementById('mutation-type').addEventListener('change', (e) => {
     const params = document.getElementById('mutation-params');
@@ -175,26 +194,41 @@ function mutate(dna, type, position, value) {
 
 // 전사/번역 처리
 function processTranscription() {
-    const dnaInput = document.getElementById('dna-input').value.trim().toUpperCase();
+    const inputSeq = document.getElementById('dna-input').value.trim().toUpperCase();
     const strandType = document.querySelector('input[name="strand"]:checked').value;
     
-    if (!dnaInput || !/^[ATCG]+$/.test(dnaInput)) {
-        alert('Please enter a valid DNA sequence (use only A, T, C, G)');
-        return;
+    let codingDna, mrna;
+    
+    if (strandType === 'mrna') {
+        if (!inputSeq || !/^[AUCG]+$/.test(inputSeq)) {
+            alert('Please enter a valid mRNA sequence (use only A, U, C, G)');
+            return;
+        }
+        mrna = triplets(inputSeq);
+        codingDna = inputSeq.replace(/U/g, 'T');
+    } else {
+        if (!inputSeq || !/^[ATCG]+$/.test(inputSeq)) {
+            alert('Please enter a valid DNA sequence (use only A, T, C, G)');
+            return;
+        }
+        if (strandType === 'template') {
+            codingDna = templateToCoding(inputSeq);
+        } else {
+            codingDna = inputSeq;
+        }
+        mrna = transcription(triplets(codingDna));
     }
     
-    let codingDna = strandType === 'template' ? templateToCoding(dnaInput) : dnaInput;
     const dnaTriplets = triplets(codingDna);
-    const mrna = transcription(dnaTriplets);
     const protein = translation(mrna);
     
-    // 결과 표시
+    // Display results
     document.getElementById('result-dna').textContent = dnaTriplets;
     document.getElementById('result-mrna').textContent = mrna;
     document.getElementById('result-protein').textContent = protein;
     document.getElementById('transcription-results').classList.remove('hidden');
     
-    // 스크롤
+    // Scroll
     document.getElementById('transcription-results').scrollIntoView({ behavior: 'smooth' });
 }
 
