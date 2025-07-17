@@ -78,6 +78,25 @@ document.querySelectorAll('input[name="mutation-strand"]').forEach(radio => {
     });
 });
 
+// 비교 strand 타입 변경 시 placeholder 업데이트
+document.querySelectorAll('input[name="comparison-strand"]').forEach(radio => {
+    radio.addEventListener('change', (e) => {
+        const input = document.getElementById('comparison-dna-input');
+        
+        switch(e.target.value) {
+            case 'coding':
+                input.placeholder = 'Enter coding DNA sequence (e.g., ATGGAATAG)';
+                break;
+            case 'template':
+                input.placeholder = 'Enter template DNA sequence (e.g., CTATTCCAT)';
+                break;
+            case 'mrna':
+                input.placeholder = 'Enter mRNA sequence (e.g., AUGGAAUAG)';
+                break;
+        }
+    });
+});
+
 // DNA를 트리플렛으로 나누기
 function triplets(dna) {
     let result = '';
@@ -239,23 +258,40 @@ function processMutation() {
 
 // 세포 비교 처리
 function processComparison() {
-    const dna = document.getElementById('comparison-dna-input').value.trim().toUpperCase();
+    const inputSeq = document.getElementById('comparison-dna-input').value.trim().toUpperCase();
+    const strandType = document.querySelector('input[name="comparison-strand"]:checked').value;
     
-    if (!dna || !/^[ATCG]+$/.test(dna)) {
-        alert('Please enter a valid DNA sequence');
-        return;
+    // Validate input based on strand type
+    let codingDna;
+    if (strandType === 'mrna') {
+        if (!inputSeq || !/^[AUCG]+$/.test(inputSeq)) {
+            alert('Please enter a valid mRNA sequence (use only A, U, C, G)');
+            return;
+        }
+        // Convert mRNA back to coding DNA
+        codingDna = inputSeq.replace(/U/g, 'T');
+    } else {
+        if (!inputSeq || !/^[ATCG]+$/.test(inputSeq)) {
+            alert('Please enter a valid DNA sequence (use only A, T, C, G)');
+            return;
+        }
+        if (strandType === 'template') {
+            codingDna = templateToCoding(inputSeq);
+        } else {
+            codingDna = inputSeq;
+        }
     }
     
-    const mrna = transcription(triplets(dna));
+    const mrna = transcription(triplets(codingDna));
     const eukaryoticProtein = translation(mrna, 'eukaryotic');
     const prokaryoticProtein = translation(mrna, 'prokaryotic');
     
-    // 결과 표시
+    // Display results
     document.getElementById('eukaryotic-protein').textContent = eukaryoticProtein;
     document.getElementById('prokaryotic-protein').textContent = prokaryoticProtein;
     document.getElementById('comparison-results').classList.remove('hidden');
     
-    // 스크롤
+    // Scroll
     document.getElementById('comparison-results').scrollIntoView({ behavior: 'smooth' });
 }
 

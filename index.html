@@ -138,7 +138,23 @@
             <div id="comparison" class="tab-content">
                 <div class="input-section">
                     <h2>Eukaryotic vs Prokaryotic</h2>
-                    <textarea id="comparison-dna-input" placeholder="Enter DNA sequence" class="dna-input"></textarea>
+                    
+                    <div class="strand-selector">
+                        <label class="radio-container">
+                            <input type="radio" name="comparison-strand" value="coding" checked>
+                            <span class="radio-label">Coding DNA (5' → 3')</span>
+                        </label>
+                        <label class="radio-container">
+                            <input type="radio" name="comparison-strand" value="template">
+                            <span class="radio-label">Template DNA (3' → 5')</span>
+                        </label>
+                        <label class="radio-container">
+                            <input type="radio" name="comparison-strand" value="mrna">
+                            <span class="radio-label">mRNA (5' → 3')</span>
+                        </label>
+                    </div>
+                    
+                    <textarea id="comparison-dna-input" placeholder="Enter coding DNA sequence (e.g., ATGGAATAG)" class="dna-input"></textarea>
                     <button class="process-btn" onclick="processComparison()">
                         <span class="btn-text">Compare</span>
                         <span class="btn-icon">🔬</span>
