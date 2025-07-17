@@ -116,6 +116,7 @@ body {
     border-radius: 12px;
     padding: 1.5rem;
     box-shadow: var(--shadow);
+    border: 2px solid var(--primary-color);
     margin-bottom: 1.5rem;
 }
 
@@ -125,15 +126,23 @@ body {
     color: var(--text-primary);
 }
 
+.selection-group {
+    margin-bottom: 1rem;
+}
+
+.selection-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
 .strand-selector,
 .cell-type-selector {
     display: flex;
     gap: 1rem;
-    margin-bottom: 1rem;
-}
-
-.cell-type-selector {
-    margin-top: 1rem;
 }
 
 .radio-container {
@@ -217,6 +226,7 @@ body {
     border-radius: 12px;
     padding: 1.5rem;
     box-shadow: var(--shadow);
+    border: 2px solid var(--primary-color);
 }
 
 .result-item {
@@ -249,6 +259,37 @@ body {
     font-size: 1.5rem;
     color: var(--primary-color);
     margin: 0.5rem 0;
+}
+
+.codon-info {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding: 0.75rem;
+    background: var(--background);
+    border-radius: 6px;
+    border: 1px solid var(--border);
+}
+
+.codon-info-item {
+    flex: 1;
+}
+
+.codon-info-label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.codon-info-value {
+    font-family: 'Courier New', monospace;
+    font-size: 0.875rem;
+    color: var(--primary-color);
+    font-weight: 600;
 }
 
 .mutation-controls {
@@ -301,6 +342,7 @@ body {
     border-radius: 12px;
     padding: 1.5rem;
     box-shadow: var(--shadow);
+    border: 2px solid var(--primary-color);
 }
 
 .comparison-column h3 {
@@ -367,6 +409,184 @@ body {
     }
 }
 
+/* Education Page Styles */
+.education-section {
+    padding: 1rem;
+}
+
+.education-section h2 {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.education-intro {
+    font-size: 1.125rem;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.education-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.education-card {
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.education-section .education-card {
+    border: 2px solid var(--primary-color);
+}
+
+.education-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.education-icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.education-card h3 {
+    color: var(--primary-color);
+    margin-bottom: 0.75rem;
+    font-size: 1.25rem;
+}
+
+.education-card > p {
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+.education-details {
+    margin-top: 1rem;
+}
+
+.education-details h4 {
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.education-details ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.education-details li {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+    padding-left: 1rem;
+    position: relative;
+    line-height: 1.5;
+}
+
+.education-details li:before {
+    content: "•";
+    color: var(--primary-color);
+    position: absolute;
+    left: 0;
+}
+
+.education-details li strong {
+    color: var(--text-primary);
+}
+
+/* DNA Strands Box - Horizontal Layout */
+.dna-strands-box {
+    margin-top: 2rem;
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    border: 2px solid var(--primary-color);
+}
+
+.dna-strands-content {
+    max-width: 100%;
+}
+
+.dna-strands-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.dna-strands-header .education-icon {
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+.dna-strands-header h3 {
+    color: var(--primary-color);
+    margin: 0;
+    font-size: 1.25rem;
+}
+
+.dna-strands-content > p {
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+    font-size: 1rem;
+}
+
+.dna-strands-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.dna-strands-column h4 {
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.dna-strands-column ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.dna-strands-column li {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+    padding-left: 1rem;
+    position: relative;
+    line-height: 1.5;
+}
+
+.dna-strands-column li:before {
+    content: "•";
+    color: var(--primary-color);
+    position: absolute;
+    left: 0;
+}
+
+.dna-strands-column li strong {
+    color: var(--text-primary);
+}
+
 /* 모바일 최적화 */
 @media (max-width: 640px) {
     .app-header h1 {
@@ -384,5 +604,34 @@ body {
     .strand-selector,
     .cell-type-selector {
         flex-direction: column;
+    }
+    
+    .education-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .education-card {
+        padding: 1rem;
+    }
+    
+    .education-section {
+        padding: 0.75rem;
+    }
+    
+    .dna-strands-box {
+        margin-top: 1rem;
+        padding: 1rem;
+    }
+    
+    .dna-strands-details {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .dna-strands-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
     }
 }

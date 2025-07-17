@@ -17,6 +17,7 @@
         <nav class="tab-navigation">
             <button class="tab-btn active" data-tab="transcription">Transcription/Translation</button>
             <button class="tab-btn" data-tab="mutation">Mutations</button>
+            <button class="tab-btn" data-tab="education">Education</button>
         </nav>
 
         <div class="content-area">
@@ -24,33 +25,39 @@
             <div id="transcription" class="tab-content active">
                 <div class="input-section">
                     <h2>Enter Sequence</h2>
-                    <div class="strand-selector">
-                        <label class="radio-container">
-                            <input type="radio" name="strand" value="coding" checked>
-                            <span class="radio-label">Coding DNA (5' → 3')</span>
-                        </label>
-                        <label class="radio-container">
-                            <input type="radio" name="strand" value="template">
-                            <span class="radio-label">Template DNA (3' → 5')</span>
-                        </label>
-                        <label class="radio-container">
-                            <input type="radio" name="strand" value="mrna">
-                            <span class="radio-label">mRNA (5' → 3')</span>
-                        </label>
+                    <div class="selection-group">
+                        <p class="selection-label">Sequence Type</p>
+                        <div class="strand-selector">
+                            <label class="radio-container">
+                                <input type="radio" name="strand" value="coding" checked>
+                                <span class="radio-label">Coding DNA (5' → 3')</span>
+                            </label>
+                            <label class="radio-container">
+                                <input type="radio" name="strand" value="template">
+                                <span class="radio-label">Template DNA (3' → 5')</span>
+                            </label>
+                            <label class="radio-container">
+                                <input type="radio" name="strand" value="mrna">
+                                <span class="radio-label">mRNA (5' → 3')</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="selection-group">
+                        <p class="selection-label">Cell Type</p>
+                        <div class="cell-type-selector">
+                            <label class="radio-container">
+                                <input type="radio" name="cell-type" value="eukaryotic" checked>
+                                <span class="radio-label">Eukaryotic (Start: AUG)</span>
+                            </label>
+                            <label class="radio-container">
+                                <input type="radio" name="cell-type" value="prokaryotic">
+                                <span class="radio-label">Prokaryotic (Start: AUG, GUG, UUG)</span>
+                            </label>
+                        </div>
                     </div>
                     
                     <textarea id="dna-input" placeholder="Enter DNA sequence (e.g., ATGGAATAG)" class="dna-input"></textarea>
-                    
-                    <div class="cell-type-selector">
-                        <label class="radio-container">
-                            <input type="radio" name="cell-type" value="eukaryotic" checked>
-                            <span class="radio-label">Eukaryotic (Start: AUG)</span>
-                        </label>
-                        <label class="radio-container">
-                            <input type="radio" name="cell-type" value="prokaryotic">
-                            <span class="radio-label">Prokaryotic (Start: AUG, GUG, UUG)</span>
-                        </label>
-                    </div>
                     
                     <button class="process-btn" onclick="processTranscription()">
                         <span class="btn-text">Analyze</span>
@@ -75,6 +82,16 @@
                             <span class="result-label">Protein:</span>
                             <span id="result-protein" class="result-sequence"></span>
                         </div>
+                        <div class="codon-info">
+                            <div class="codon-info-item">
+                                <span class="codon-info-label">Start Codon:</span>
+                                <span id="result-start-codon" class="codon-info-value"></span>
+                            </div>
+                            <div class="codon-info-item">
+                                <span class="codon-info-label">End Codon:</span>
+                                <span id="result-end-codon" class="codon-info-value"></span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -84,19 +101,22 @@
                 <div class="input-section">
                     <h2>Mutation Simulation</h2>
                     
-                    <div class="strand-selector">
-                        <label class="radio-container">
-                            <input type="radio" name="mutation-strand" value="coding" checked>
-                            <span class="radio-label">Coding DNA (5' → 3')</span>
-                        </label>
-                        <label class="radio-container">
-                            <input type="radio" name="mutation-strand" value="template">
-                            <span class="radio-label">Template DNA (3' → 5')</span>
-                        </label>
-                        <label class="radio-container">
-                            <input type="radio" name="mutation-strand" value="mrna">
-                            <span class="radio-label">mRNA (5' → 3')</span>
-                        </label>
+                    <div class="selection-group">
+                        <p class="selection-label">Sequence Type</p>
+                        <div class="strand-selector">
+                            <label class="radio-container">
+                                <input type="radio" name="mutation-strand" value="coding" checked>
+                                <span class="radio-label">Coding DNA (5' → 3')</span>
+                            </label>
+                            <label class="radio-container">
+                                <input type="radio" name="mutation-strand" value="template">
+                                <span class="radio-label">Template DNA (3' → 5')</span>
+                            </label>
+                            <label class="radio-container">
+                                <input type="radio" name="mutation-strand" value="mrna">
+                                <span class="radio-label">mRNA (5' → 3')</span>
+                            </label>
+                        </div>
                     </div>
                     
                     <textarea id="mutation-dna-input" placeholder="Enter coding DNA sequence (e.g., ATGGAATAG)" class="dna-input"></textarea>
@@ -144,6 +164,161 @@
                             <div class="result-item">
                                 <span class="result-label">Protein:</span>
                                 <span id="mutated-protein" class="result-sequence"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Education Tab -->
+            <div id="education" class="tab-content">
+                <div class="education-section">
+                    <h2>🧬 Understanding Protein Synthesis</h2>
+                    <p class="education-intro">Learn about the fascinating process that transforms genetic information into functional proteins.</p>
+                    
+                    <div class="education-grid">
+                        <div class="education-card">
+                            <div class="education-icon">🔄</div>
+                            <h3>Transcription</h3>
+                            <p>This is like making a copy of DNA instructions. The cell copies DNA into mRNA (messenger RNA).</p>
+                            <div class="education-details">
+                                <h4>What happens:</h4>
+                                <ul>
+                                    <li>DNA opens up like a zipper</li>
+                                    <li>A special enzyme reads the DNA code</li>
+                                    <li>It makes an mRNA copy of the instructions</li>
+                                    <li>The mRNA copy can leave the nucleus</li>
+                                    <li>DNA letters change: A→U, T→A, C→G, G→C</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="education-card">
+                            <div class="education-icon">🏭</div>
+                            <h3>Translation</h3>
+                            <p>This is like using a recipe. The cell reads mRNA instructions and builds proteins from amino acids.</p>
+                            <div class="education-details">
+                                <h4>What happens:</h4>
+                                <ul>
+                                    <li>Ribosomes (protein factories) read the mRNA</li>
+                                    <li>They read 3 letters at a time (called codons)</li>
+                                    <li>Each codon tells which amino acid to add</li>
+                                    <li>AUG means "start making protein"</li>
+                                    <li>Special stop signals mean "protein is finished"</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="education-card">
+                            <div class="education-icon">🧩</div>
+                            <h3>Codon Usage</h3>
+                            <p>Codons are like words in the genetic language. Each "word" is 3 letters long and tells the cell which amino acid to use.</p>
+                            <div class="education-details">
+                                <h4>Important facts:</h4>
+                                <ul>
+                                    <li>There are 64 possible 3-letter combinations</li>
+                                    <li>61 of them mean "add this amino acid"</li>
+                                    <li>3 of them mean "stop making the protein"</li>
+                                    <li>Most amino acids have more than one codon</li>
+                                    <li>AUG is special - it means both "start" and "add methionine"</li>
+                                    <li>Almost all living things use the same genetic code</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="education-card">
+                            <div class="education-icon">🔗</div>
+                            <h3>Protein Folding</h3>
+                            <p>After amino acids are linked together, they fold into specific 3D shapes. The shape determines what the protein can do.</p>
+                            <div class="education-details">
+                                <h4>How proteins get their shape:</h4>
+                                <ul>
+                                    <li>Amino acids are like beads on a string</li>
+                                    <li>The string folds and twists in specific ways</li>
+                                    <li>The final shape is like a complex 3D puzzle</li>
+                                    <li>Different shapes do different jobs in the cell</li>
+                                    <li>Special helper proteins help with folding</li>
+                                    <li>Wrong folding can make proteins not work</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="education-card">
+                            <div class="education-icon">🔬</div>
+                            <h3>Cell Type Differences</h3>
+                            <p>There are two main types of cells, and they make proteins differently!</p>
+                            <div class="education-details">
+                                <h4>Animal/Plant Cells (Eukaryotes):</h4>
+                                <ul>
+                                    <li>Have a nucleus (control center)</li>
+                                    <li>Make mRNA inside the nucleus</li>
+                                    <li>Make proteins outside the nucleus</li>
+                                    <li>Only use AUG to start making proteins</li>
+                                    <li>Process mRNA before using it</li>
+                                </ul>
+                                <h4>Bacterial Cells (Prokaryotes):</h4>
+                                <ul>
+                                    <li>No nucleus - everything mixed together</li>
+                                    <li>Make mRNA and proteins in the same place</li>
+                                    <li>Can use AUG, GUG, or UUG to start proteins</li>
+                                    <li>Use mRNA right away without processing</li>
+                                    <li>Can make proteins while still copying DNA</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="education-card">
+                            <div class="education-icon">⚡</div>
+                            <h3>Mutations</h3>
+                            <p>Sometimes DNA gets changed by mistake. These changes can affect how proteins are made.</p>
+                            <div class="education-details">
+                                <h4>Types of DNA Changes:</h4>
+                                <ul>
+                                    <li><strong>Letter change:</strong> One DNA letter becomes a different letter</li>
+                                    <li><strong>Addition:</strong> Extra DNA letters get added</li>
+                                    <li><strong>Deletion:</strong> Some DNA letters get removed</li>
+                                    <li><strong>Duplication:</strong> A section of DNA gets copied twice</li>
+                                    <li><strong>Flip:</strong> A section of DNA gets turned backwards</li>
+                                </ul>
+                                <h4>What can happen to proteins:</h4>
+                                <ul>
+                                    <li><strong>No change:</strong> Protein stays exactly the same</li>
+                                    <li><strong>Different protein:</strong> One amino acid changes</li>
+                                    <li><strong>Shorter protein:</strong> Protein stops being made too early</li>
+                                    <li><strong>Completely different:</strong> Reading frame shifts, everything changes</li>
+                                    <li><strong>Processing problems:</strong> mRNA doesn't get processed correctly</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="dna-strands-box">
+                        <div class="dna-strands-content">
+                            <div class="dna-strands-header">
+                                <div class="education-icon">🧵</div>
+                                <h3>Understanding DNA Strands</h3>
+                            </div>
+                            <p>DNA has two strands that work together, but they have different jobs during protein making.</p>
+                            <div class="dna-strands-details">
+                                <div class="dna-strands-column">
+                                    <h4>The Two Strands:</h4>
+                                    <ul>
+                                        <li><strong>Template Strand:</strong> This is the strand the cell actually reads to make mRNA</li>
+                                        <li><strong>Coding Strand:</strong> This strand has the same sequence as mRNA (except T instead of U)</li>
+                                        <li>The two strands are like opposite sides of a zipper</li>
+                                        <li>They run in opposite directions (antiparallel)</li>
+                                        <li>Where one has A, the other has T; where one has C, the other has G</li>
+                                    </ul>
+                                </div>
+                                <div class="dna-strands-column">
+                                    <h4>Why this matters:</h4>
+                                    <ul>
+                                        <li>Only the template strand gets read during transcription</li>
+                                        <li>The coding strand "shows" what the mRNA will look like</li>
+                                        <li>Scientists often write DNA sequences using the coding strand</li>
+                                        <li>This calculator lets you input either strand type</li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>

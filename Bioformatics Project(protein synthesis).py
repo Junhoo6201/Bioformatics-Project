@@ -31,9 +31,9 @@ codonTable = {
     # Lysine
     "AAA": "Lysine", "AAG": "Lysine",
     # Aspartic Acid
-    "GAU": "Aspartic Acid", "GAC": "Aspartic Acid",
+    "GAU": "Aspartic-Acid", "GAC": "Aspartic-Acid",
     # Glutamic Acid
-    "GAA": "Glutamic Acid", "GAG": "Glutamic Acid",
+    "GAA": "Glutamic-Acid", "GAG": "Glutamic-Acid",
     # Cysteine
     "UGU": "Cysteine", "UGC": "Cysteine",
     # Tryptophan

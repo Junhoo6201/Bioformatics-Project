@@ -14,8 +14,8 @@ const codonTable = {
     "CAA": "Glutamine", "CAG": "Glutamine",
     "AAU": "Asparagine", "AAC": "Asparagine",
     "AAA": "Lysine", "AAG": "Lysine",
-    "GAU": "Aspartic Acid", "GAC": "Aspartic Acid",
-    "GAA": "Glutamic Acid", "GAG": "Glutamic Acid",
+    "GAU": "Aspartic-Acid", "GAC": "Aspartic-Acid",
+    "GAA": "Glutamic-Acid", "GAG": "Glutamic-Acid",
     "UGU": "Cysteine", "UGC": "Cysteine",
     "UGG": "Tryptophan",
     "CGU": "Arginine", "CGC": "Arginine", "CGA": "Arginine", "CGG": "Arginine", "AGA": "Arginine", "AGG": "Arginine",
@@ -145,17 +145,21 @@ function translation(mrna, organism = 'eukaryotic') {
     let startCodons = organism === 'prokaryotic' ? ['AUG', 'GUG', 'UUG'] : ['AUG'];
     let polypeptide = '';
     let start = false;
+    let startCodonUsed = null;
+    let endCodonUsed = null;
     
     const cleanMrna = mrna.replace(/\s/g, '');
     
     for (let i = 0; i < cleanMrna.length; i += 3) {
         const codon = cleanMrna.substring(i, i + 3);
-        if (startCodons.includes(codon)) {
+        if (startCodons.includes(codon) && !start) {
             start = true;
+            startCodonUsed = codon;
         }
         if (start && codon.length === 3) {
             const amino = codonTable[codon];
             if (amino === 'Stop') {
+                endCodonUsed = codon;
                 break;
             }
             if (amino) {
@@ -164,7 +168,15 @@ function translation(mrna, organism = 'eukaryotic') {
         }
     }
     
-    return polypeptide.trim() || 'No protein translated';
+    const protein = polypeptide.trim() || 'No protein translated';
+    const startInfo = startCodonUsed ? `Start: ${startCodonUsed}` : 'No start codon found';
+    const endInfo = endCodonUsed ? `End: ${endCodonUsed}` : 'No end codon found';
+    
+    return {
+        protein: protein,
+        startCodon: startInfo,
+        endCodon: endInfo
+    };
 }
 
 // 돌연변이 적용
@@ -221,12 +233,14 @@ function processTranscription() {
     
     const dnaTriplets = triplets(codingDna);
     const cellType = document.querySelector('input[name="cell-type"]:checked').value;
-    const protein = translation(mrna, cellType);
+    const translationResult = translation(mrna, cellType);
     
     // Display results
     document.getElementById('result-dna').textContent = dnaTriplets;
     document.getElementById('result-mrna').textContent = mrna;
-    document.getElementById('result-protein').textContent = protein;
+    document.getElementById('result-protein').textContent = translationResult.protein;
+    document.getElementById('result-start-codon').textContent = translationResult.startCodon;
+    document.getElementById('result-end-codon').textContent = translationResult.endCodon;
     document.getElementById('transcription-results').classList.remove('hidden');
     
     // Scroll
@@ -276,15 +290,15 @@ function processMutation() {
     
     // Calculate original and mutated results
     const originalMrna = transcription(triplets(codingDna));
-    const originalProtein = translation(originalMrna);
+    const originalTranslation = translation(originalMrna);
     const mutatedMrna = transcription(triplets(mutatedDna));
-    const mutatedProtein = translation(mutatedMrna);
+    const mutatedTranslation = translation(mutatedMrna);
     
     // Display results
     document.getElementById('original-dna').textContent = triplets(codingDna);
-    document.getElementById('original-protein').textContent = originalProtein;
+    document.getElementById('original-protein').textContent = originalTranslation.protein;
     document.getElementById('mutated-dna').textContent = triplets(mutatedDna);
-    document.getElementById('mutated-protein').textContent = mutatedProtein;
+    document.getElementById('mutated-protein').textContent = mutatedTranslation.protein;
     document.getElementById('mutation-results').classList.remove('hidden');
     
     // Scroll
@@ -318,12 +332,12 @@ function processComparison() {
     }
     
     const mrna = transcription(triplets(codingDna));
-    const eukaryoticProtein = translation(mrna, 'eukaryotic');
-    const prokaryoticProtein = translation(mrna, 'prokaryotic');
+    const eukaryoticTranslation = translation(mrna, 'eukaryotic');
+    const prokaryoticTranslation = translation(mrna, 'prokaryotic');
     
     // Display results
-    document.getElementById('eukaryotic-protein').textContent = eukaryoticProtein;
-    document.getElementById('prokaryotic-protein').textContent = prokaryoticProtein;
+    document.getElementById('eukaryotic-protein').textContent = eukaryoticTranslation.protein;
+    document.getElementById('prokaryotic-protein').textContent = prokaryoticTranslation.protein;
     document.getElementById('comparison-results').classList.remove('hidden');
     
     // Scroll
