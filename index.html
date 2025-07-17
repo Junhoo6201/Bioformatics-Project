@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protein Synthesis Calculator</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <h1>🧬 Protein Synthesis Calculator</h1>
+            <p class="subtitle">From DNA to Protein</p>
+        </header>
+
+        <nav class="tab-navigation">
+            <button class="tab-btn active" data-tab="transcription">Transcription/Translation</button>
+            <button class="tab-btn" data-tab="mutation">Mutations</button>
+            <button class="tab-btn" data-tab="comparison">Cell Comparison</button>
+        </nav>
+
+        <div class="content-area">
+            <!-- 전사/번역 탭 -->
+            <div id="transcription" class="tab-content active">
+                <div class="input-section">
+                    <h2>Enter DNA Sequence</h2>
+                    <div class="strand-selector">
+                        <label class="radio-container">
+                            <input type="radio" name="strand" value="coding" checked>
+                            <span class="radio-label">Coding Strand (5' → 3')</span>
+                        </label>
+                        <label class="radio-container">
+                            <input type="radio" name="strand" value="template">
+                            <span class="radio-label">Template Strand (3' → 5')</span>
+                        </label>
+                    </div>
+                    <textarea id="dna-input" placeholder="Enter DNA sequence (e.g., ATGGAATAG)" class="dna-input"></textarea>
+                    <button class="process-btn" onclick="processTranscription()">
+                        <span class="btn-text">Analyze</span>
+                        <span class="btn-icon">→</span>
+                    </button>
+                </div>
+
+                <div id="transcription-results" class="results-section hidden">
+                    <h2>Results</h2>
+                    <div class="result-card">
+                        <div class="result-item">
+                            <span class="result-label">DNA (Coding):</span>
+                            <span id="result-dna" class="result-sequence"></span>
+                        </div>
+                        <div class="arrow-down">↓</div>
+                        <div class="result-item">
+                            <span class="result-label">mRNA:</span>
+                            <span id="result-mrna" class="result-sequence"></span>
+                        </div>
+                        <div class="arrow-down">↓</div>
+                        <div class="result-item">
+                            <span class="result-label">Protein:</span>
+                            <span id="result-protein" class="result-sequence"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 돌연변이 탭 -->
+            <div id="mutation" class="tab-content">
+                <div class="input-section">
+                    <h2>Mutation Simulation</h2>
+                    
+                    <div class="strand-selector">
+                        <label class="radio-container">
+                            <input type="radio" name="mutation-strand" value="coding" checked>
+                            <span class="radio-label">Coding DNA (5' → 3')</span>
+                        </label>
+                        <label class="radio-container">
+                            <input type="radio" name="mutation-strand" value="template">
+                            <span class="radio-label">Template DNA (3' → 5')</span>
+                        </label>
+                        <label class="radio-container">
+                            <input type="radio" name="mutation-strand" value="mrna">
+                            <span class="radio-label">mRNA (5' → 3')</span>
+                        </label>
+                    </div>
+                    
+                    <textarea id="mutation-dna-input" placeholder="Enter coding DNA sequence (e.g., ATGGAATAG)" class="dna-input"></textarea>
+                    
+                    <div class="mutation-controls">
+                        <select id="mutation-type" class="mutation-select">
+                            <option value="">Select mutation type</option>
+                            <option value="point">Point mutation (substitution)</option>
+                            <option value="insertion">Insertion</option>
+                            <option value="deletion">Deletion</option>
+                        </select>
+
+                        <div class="mutation-params hidden" id="mutation-params">
+                            <input type="number" id="mutation-position" placeholder="Position (0-based)" min="0" class="position-input">
+                            <input type="text" id="mutation-value" placeholder="New base (A/T/C/G)" maxlength="1" class="base-input">
+                        </div>
+                    </div>
+
+                    <button class="process-btn" onclick="processMutation()">
+                        <span class="btn-text">Apply Mutation</span>
+                        <span class="btn-icon">⚡</span>
+                    </button>
+                </div>
+
+                <div id="mutation-results" class="results-section hidden">
+                    <h2>Mutation Results</h2>
+                    <div class="comparison-grid">
+                        <div class="comparison-column">
+                            <h3>Original</h3>
+                            <div class="result-item">
+                                <span class="result-label">DNA:</span>
+                                <span id="original-dna" class="result-sequence"></span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Protein:</span>
+                                <span id="original-protein" class="result-sequence"></span>
+                            </div>
+                        </div>
+                        <div class="comparison-column">
+                            <h3>Mutated</h3>
+                            <div class="result-item">
+                                <span class="result-label">DNA:</span>
+                                <span id="mutated-dna" class="result-sequence"></span>
+                            </div>
+                            <div class="result-item">
+                                <span class="result-label">Protein:</span>
+                                <span id="mutated-protein" class="result-sequence"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 세포 비교 탭 -->
+            <div id="comparison" class="tab-content">
+                <div class="input-section">
+                    <h2>Eukaryotic vs Prokaryotic</h2>
+                    <textarea id="comparison-dna-input" placeholder="Enter DNA sequence" class="dna-input"></textarea>
+                    <button class="process-btn" onclick="processComparison()">
+                        <span class="btn-text">Compare</span>
+                        <span class="btn-icon">🔬</span>
+                    </button>
+                </div>
+
+                <div id="comparison-results" class="results-section hidden">
+                    <h2>Translation Results by Cell Type</h2>
+                    <div class="comparison-grid">
+                        <div class="comparison-column">
+                            <h3>Eukaryotic</h3>
+                            <p class="cell-info">Start codons: AUG</p>
+                            <div class="result-item">
+                                <span class="result-label">Protein:</span>
+                                <span id="eukaryotic-protein" class="result-sequence"></span>
+                            </div>
+                        </div>
+                        <div class="comparison-column">
+                            <h3>Prokaryotic</h3>
+                            <p class="cell-info">Start codons: AUG, GUG, UUG</p>
+                            <div class="result-item">
+                                <span class="result-label">Protein:</span>
+                                <span id="prokaryotic-protein" class="result-sequence"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="app-footer">
+            <p>Bioinformatics Project © 2025</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
