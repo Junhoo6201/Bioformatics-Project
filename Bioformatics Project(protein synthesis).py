@@ -95,6 +95,6 @@ while True:
 #1. coding strand and template strand
 #2. mutations
 #3. other cell protien synthesis
-    
+#4. more start codons
     
 
