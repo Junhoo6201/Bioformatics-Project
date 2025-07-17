@@ -125,10 +125,15 @@ body {
     color: var(--text-primary);
 }
 
-.strand-selector {
+.strand-selector,
+.cell-type-selector {
     display: flex;
     gap: 1rem;
     margin-bottom: 1rem;
+}
+
+.cell-type-selector {
+    margin-top: 1rem;
 }
 
 .radio-container {
@@ -376,7 +381,8 @@ body {
         padding: 1rem;
     }
     
-    .strand-selector {
+    .strand-selector,
+    .cell-type-selector {
         flex-direction: column;
     }
 }

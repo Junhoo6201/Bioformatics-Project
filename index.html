@@ -17,7 +17,6 @@
         <nav class="tab-navigation">
             <button class="tab-btn active" data-tab="transcription">Transcription/Translation</button>
             <button class="tab-btn" data-tab="mutation">Mutations</button>
-            <button class="tab-btn" data-tab="comparison">Cell Comparison</button>
         </nav>
 
         <div class="content-area">
@@ -39,7 +38,20 @@
                             <span class="radio-label">mRNA (5' → 3')</span>
                         </label>
                     </div>
+                    
                     <textarea id="dna-input" placeholder="Enter DNA sequence (e.g., ATGGAATAG)" class="dna-input"></textarea>
+                    
+                    <div class="cell-type-selector">
+                        <label class="radio-container">
+                            <input type="radio" name="cell-type" value="eukaryotic" checked>
+                            <span class="radio-label">Eukaryotic (Start: AUG)</span>
+                        </label>
+                        <label class="radio-container">
+                            <input type="radio" name="cell-type" value="prokaryotic">
+                            <span class="radio-label">Prokaryotic (Start: AUG, GUG, UUG)</span>
+                        </label>
+                    </div>
+                    
                     <button class="process-btn" onclick="processTranscription()">
                         <span class="btn-text">Analyze</span>
                         <span class="btn-icon">→</span>

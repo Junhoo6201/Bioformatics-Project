@@ -220,7 +220,8 @@ function processTranscription() {
     }
     
     const dnaTriplets = triplets(codingDna);
-    const protein = translation(mrna);
+    const cellType = document.querySelector('input[name="cell-type"]:checked').value;
+    const protein = translation(mrna, cellType);
     
     // Display results
     document.getElementById('result-dna').textContent = dnaTriplets;
