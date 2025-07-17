@@ -86,6 +86,7 @@ while True:
         print(f"Polypeptide: {polypeptide}")
     elif choice == 1:
         dna = input("Input DNA template strand sequence: ")
+        print("--------------------------------------------------------------------------------")
         
     else:
         print("only choose among the given choices...")
@@ -96,5 +97,5 @@ while True:
 #2. mutations
 #3. other cell protien synthesis
 #4. more start codons
-    
+
 
