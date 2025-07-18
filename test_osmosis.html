@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Osmosis Test</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+            display: block;
+            margin: 20px auto;
+        }
+        button {
+            display: block;
+            margin: 10px auto;
+            padding: 10px 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center;">Osmosis Simulation Test</h1>
+    <canvas id="test-canvas" width="800" height="400"></canvas>
+    <button onclick="testAnimation()">Start Test Animation</button>
+    
+    <script>
+        let animating = false;
+        let particles = [];
+        
+        class TestParticle {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.vx = (Math.random() - 0.5) * 4;
+                this.vy = (Math.random() - 0.5) * 4;
+                this.radius = 8;
+            }
+            
+            update(canvas) {
+                this.vx += (Math.random() - 0.5) * 1;
+                this.vy += (Math.random() - 0.5) * 1;
+                this.vx *= 0.95;
+                this.vy *= 0.95;
+                
+                this.x += this.vx;
+                this.y += this.vy;
+                
+                if (this.x < this.radius || this.x > canvas.width - this.radius) {
+                    this.vx *= -1;
+                    this.x = Math.max(this.radius, Math.min(canvas.width - this.radius, this.x));
+                }
+                if (this.y < this.radius || this.y > canvas.height - this.radius) {
+                    this.vy *= -1;
+                    this.y = Math.max(this.radius, Math.min(canvas.height - this.radius, this.y));
+                }
+            }
+            
+            draw(ctx) {
+                ctx.fillStyle = 'red';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+        
+        function testAnimation() {
+            const canvas = document.getElementById('test-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Create particles
+            particles = [];
+            for (let i = 0; i < 20; i++) {
+                particles.push(new TestParticle(
+                    Math.random() * canvas.width,
+                    Math.random() * canvas.height
+                ));
+            }
+            
+            animating = true;
+            animate();
+        }
+        
+        function animate() {
+            if (!animating) return;
+            
+            const canvas = document.getElementById('test-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Clear
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Update and draw
+            particles.forEach(p => {
+                p.update(canvas);
+                p.draw(ctx);
+            });
+            
+            requestAnimationFrame(animate);
+        }
+        
+        // Initialize
+        const canvas = document.getElementById('test-canvas');
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#f0f0f0';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = 'black';
+        ctx.font = '20px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('Click button to test animation', canvas.width/2, canvas.height/2);
+    </script>
+</body>
+</html>

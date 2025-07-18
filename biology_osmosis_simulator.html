@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>High School Biology - Osmosis & Diffusion Simulator</title>
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-bottom: 3px solid #4a90e2;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+
+        /* Main Container */
+        .container {
+            display: grid;
+            grid-template-columns: 300px 1fr 250px;
+            gap: 1rem;
+            padding: 1rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            min-height: calc(100vh - 120px);
+        }
+
+        /* Control Panel */
+        .control-panel {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+
+        .control-section {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .control-section:last-child {
+            border-bottom: none;
+        }
+
+        .control-section h3 {
+            color: #2c3e50;
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+        }
+
+        .control-group {
+            margin-bottom: 1rem;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 0.3rem;
+            font-weight: 600;
+            color: #34495e;
+            font-size: 0.9rem;
+        }
+
+        select, input[type="range"] {
+            width: 100%;
+            padding: 0.5rem;
+            border: 2px solid #bdc3c7;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            transition: border-color 0.3s;
+        }
+
+        select:focus, input[type="range"]:focus {
+            outline: none;
+            border-color: #4a90e2;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .slider-value {
+            background: #4a90e2;
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: auto;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 0.25rem;
+        }
+
+        .btn-primary {
+            background: #4a90e2;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #357abd;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        /* Simulation Area */
+        .simulation-area {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .simulation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .simulation-status {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .status-item {
+            background: #ecf0f1;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            color: #2c3e50;
+        }
+
+        #simulationCanvas {
+            border: 2px solid #bdc3c7;
+            border-radius: 8px;
+            background: white;
+            flex: 1;
+            min-height: 400px;
+        }
+
+        /* Data Panel */
+        .data-panel {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+
+        .data-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .data-section h3 {
+            color: #2c3e50;
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+        }
+
+        .concentration-display {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+        }
+
+        .chamber-data {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .chamber-label {
+            font-weight: 600;
+            color: #34495e;
+        }
+
+        .chamber-value {
+            color: #4a90e2;
+            font-weight: 600;
+        }
+
+        .legend {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid #2c3e50;
+        }
+
+        .preset-section {
+            margin-bottom: 1rem;
+        }
+
+        .preset-btn {
+            width: 100%;
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+            background: #ecf0f1;
+            border: 1px solid #bdc3c7;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .preset-btn:hover {
+            background: #d5dbdb;
+        }
+
+        /* Tooltips */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+        }
+
+        .tooltip:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2c3e50;
+            color: white;
+            padding: 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            z-index: 1000;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .control-panel, .data-panel {
+                order: 2;
+            }
+            
+            .simulation-area {
+                order: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 1rem;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .container {
+                padding: 0.5rem;
+            }
+            
+            .control-panel, .simulation-area, .data-panel {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1>🧬 Osmosis & Diffusion Simulator</h1>
+        <p>Interactive Biology Learning Tool for High School Students</p>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <!-- Preset Scenarios -->
+            <div class="control-section">
+                <h3>📚 Educational Scenarios</h3>
+                <div class="preset-section">
+                    <button class="preset-btn" onclick="loadPreset('isotonic')">
+                        🔴 Red Blood Cell - Isotonic
+                    </button>
+                    <button class="preset-btn" onclick="loadPreset('hypertonic')">
+                        🔴 Red Blood Cell - Hypertonic
+                    </button>
+                    <button class="preset-btn" onclick="loadPreset('hypotonic')">
+                        🔴 Red Blood Cell - Hypotonic
+                    </button>
+                    <button class="preset-btn" onclick="loadPreset('dialysis')">
+                        🧪 Dialysis Tubing
+                    </button>
+                    <button class="preset-btn" onclick="loadPreset('diffusion')">
+                        💨 Simple Diffusion
+                    </button>
+                    <button class="preset-btn" onclick="loadPreset('temperature')">
+                        🌡️ Temperature Effects
+                    </button>
+                </div>
+            </div>
+
+            <!-- Chamber Setup -->
+            <div class="control-section">
+                <h3>🧪 Chamber Setup</h3>
+                
+                <div class="control-group">
+                    <label>Left Chamber Concentration:</label>
+                    <select id="leftConcentration">
+                        <option value="0">None (Pure Water)</option>
+                        <option value="25">Low (0.25M)</option>
+                        <option value="50">Medium (0.5M)</option>
+                        <option value="100" selected>High (1.0M)</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label>Left Chamber Solution:</label>
+                    <select id="leftSolution">
+                        <option value="water">Pure Water</option>
+                        <option value="salt" selected>Salt Water (NaCl)</option>
+                        <option value="sugar">Sugar Water (Glucose)</option>
+                        <option value="protein">Protein Solution</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label>Right Chamber Concentration:</label>
+                    <select id="rightConcentration">
+                        <option value="0">None (Pure Water)</option>
+                        <option value="25" selected>Low (0.25M)</option>
+                        <option value="50">Medium (0.5M)</option>
+                        <option value="100">High (1.0M)</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label>Right Chamber Solution:</label>
+                    <select id="rightSolution">
+                        <option value="water" selected>Pure Water</option>
+                        <option value="salt">Salt Water (NaCl)</option>
+                        <option value="sugar">Sugar Water (Glucose)</option>
+                        <option value="protein">Protein Solution</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Membrane Settings -->
+            <div class="control-section">
+                <h3>🧱 Membrane Settings</h3>
+                
+                <div class="control-group">
+                    <label>Membrane Type:</label>
+                    <select id="membraneType">
+                        <option value="permeable">Fully Permeable</option>
+                        <option value="semi" selected>Semi-Permeable</option>
+                        <option value="impermeable">Impermeable</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label>Membrane Allows:</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="allowWater" checked>
+                            <label for="allowWater">Water molecules</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="allowSmall" checked>
+                            <label for="allowSmall">Small molecules (salt, glucose)</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="allowLarge">
+                            <label for="allowLarge">Large molecules (proteins)</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Environment Settings -->
+            <div class="control-section">
+                <h3>🌡️ Environment</h3>
+                
+                <div class="control-group">
+                    <label>Temperature:</label>
+                    <div class="slider-container">
+                        <input type="range" id="temperature" min="0" max="100" value="37">
+                        <span class="slider-value" id="tempValue">37°C</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label>Animation Speed:</label>
+                    <div class="slider-container">
+                        <input type="range" id="animationSpeed" min="0.1" max="3" step="0.1" value="1">
+                        <span class="slider-value" id="speedValue">1x</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Control Buttons -->
+            <div class="control-section">
+                <button class="btn btn-primary" onclick="startSimulation()">▶️ Start</button>
+                <button class="btn btn-secondary" onclick="pauseSimulation()">⏸️ Pause</button>
+                <button class="btn btn-danger" onclick="resetSimulation()">🔄 Reset</button>
+            </div>
+        </div>
+
+        <!-- Simulation Area -->
+        <div class="simulation-area">
+            <div class="simulation-header">
+                <h3>🔬 Simulation View</h3>
+                <div class="simulation-status">
+                    <div class="status-item">
+                        <strong>Time:</strong> <span id="simTime">0.0s</span>
+                    </div>
+                    <div class="status-item">
+                        <strong>Status:</strong> <span id="simStatus">Ready</span>
+                    </div>
+                </div>
+            </div>
+            <canvas id="simulationCanvas" width="800" height="500"></canvas>
+        </div>
+
+        <!-- Data Panel -->
+        <div class="data-panel">
+            <!-- Live Data -->
+            <div class="data-section">
+                <h3>📊 Live Data</h3>
+                <div class="concentration-display">
+                    <div class="chamber-data">
+                        <span class="chamber-label">Left Chamber:</span>
+                        <span class="chamber-value" id="leftConc">0 particles</span>
+                    </div>
+                    <div class="chamber-data">
+                        <span class="chamber-label">Right Chamber:</span>
+                        <span class="chamber-value" id="rightConc">0 particles</span>
+                    </div>
+                    <div class="chamber-data">
+                        <span class="chamber-label">Equilibrium:</span>
+                        <span class="chamber-value" id="equilibrium">Not Reached</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Particle Legend -->
+            <div class="data-section">
+                <h3>🔍 Particle Legend</h3>
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #3498db;"></div>
+                        <span>Water (H₂O)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #e74c3c;"></div>
+                        <span>Salt (NaCl)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #2ecc71;"></div>
+                        <span>Glucose (C₆H₁₂O₆)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #9b59b6;"></div>
+                        <span>Protein</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Help Section -->
+            <div class="data-section">
+                <h3>❓ Quick Help</h3>
+                <p style="font-size: 0.9rem; line-height: 1.4; color: #7f8c8d;">
+                    <strong>Osmosis:</strong> Water moves toward higher solute concentration.<br><br>
+                    <strong>Diffusion:</strong> Particles move from high to low concentration.<br><br>
+                    <strong>Semi-permeable:</strong> Allows some molecules through, blocks others.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Core Classes and Physics Engine
+        class Particle {
+            constructor(x, y, type, size = 4) {
+                this.x = x;
+                this.y = y;
+                this.type = type;
+                this.size = size;
+                this.vx = (Math.random() - 0.5) * 2;
+                this.vy = (Math.random() - 0.5) * 2;
+                this.color = this.getColor();
+                this.mass = this.getMass();
+            }
+
+            getColor() {
+                const colors = {
+                    'water': '#3498db',
+                    'salt': '#e74c3c',
+                    'sugar': '#2ecc71',
+                    'protein': '#9b59b6'
+                };
+                return colors[this.type] || '#95a5a6';
+            }
+
+            getMass() {
+                const masses = {
+                    'water': 1,
+                    'salt': 2,
+                    'sugar': 3,
+                    'protein': 8
+                };
+                return masses[this.type] || 1;
+            }
+
+            update(temperature, speed, canvasWidth, canvasHeight) {
+                // Brownian motion with Gaussian distribution
+                const tempFactor = 0.5 + (temperature / 100) * 1.5;
+                const massEffect = 1 / Math.sqrt(this.mass);
+                const speedMultiplier = speed; // Direct speed multiplier
+                
+                // Add random velocity (Brownian motion)
+                this.vx += (Math.random() - 0.5) * tempFactor * massEffect * speedMultiplier;
+                this.vy += (Math.random() - 0.5) * tempFactor * massEffect * speedMultiplier;
+
+                // Apply damping
+                this.vx *= 0.98;
+                this.vy *= 0.98;
+
+                // Limit velocity based on speed
+                const maxVel = 3 * tempFactor * speedMultiplier;
+                this.vx = Math.max(-maxVel, Math.min(maxVel, this.vx));
+                this.vy = Math.max(-maxVel, Math.min(maxVel, this.vy));
+
+                // Update position with speed multiplier
+                this.x += this.vx * speedMultiplier;
+                this.y += this.vy * speedMultiplier;
+
+                // Bounce off walls
+                if (this.x <= this.size || this.x >= canvasWidth - this.size) {
+                    this.vx *= -1;
+                    this.x = Math.max(this.size, Math.min(canvasWidth - this.size, this.x));
+                }
+                if (this.y <= this.size || this.y >= canvasHeight - this.size) {
+                    this.vy *= -1;
+                    this.y = Math.max(this.size, Math.min(canvasHeight - this.size, this.y));
+                }
+            }
+
+            draw(ctx) {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#2c3e50';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                // Add labels for proteins
+                if (this.type === 'protein') {
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = '8px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('P', this.x, this.y + 2);
+                }
+            }
+        }
+
+        class Membrane {
+            constructor(x, width, height) {
+                this.x = x;
+                this.width = 8;
+                this.height = height;
+                this.type = 'semi';
+                this.allows = {
+                    water: true,
+                    small: true,
+                    large: false
+                };
+            }
+
+            canCross(particle) {
+                if (this.type === 'permeable') return true;
+                if (this.type === 'impermeable') return false;
+                
+                // Semi-permeable logic
+                if (particle.type === 'water' && this.allows.water) return true;
+                if ((particle.type === 'salt' || particle.type === 'sugar') && this.allows.small) return true;
+                if (particle.type === 'protein' && this.allows.large) return true;
+                
+                return false;
+            }
+
+            checkCollision(particle) {
+                const membraneLeft = this.x - this.width / 2;
+                const membraneRight = this.x + this.width / 2;
+
+                if (particle.x >= membraneLeft - particle.size && 
+                    particle.x <= membraneRight + particle.size) {
+                    
+                    if (this.canCross(particle)) {
+                        // Allow crossing with some probability
+                        if (Math.random() < 0.7) {
+                            return false; // Don't block
+                        }
+                    }
+                    
+                    // Block particle
+                    particle.vx *= -1;
+                    if (particle.x < this.x) {
+                        particle.x = membraneLeft - particle.size;
+                    } else {
+                        particle.x = membraneRight + particle.size;
+                    }
+                    return true;
+                }
+                return false;
+            }
+
+            draw(ctx) {
+                ctx.fillStyle = this.type === 'impermeable' ? '#2c3e50' : '#7f8c8d';
+                ctx.fillRect(this.x - this.width / 2, 0, this.width, this.height);
+
+                // Draw pores for semi-permeable
+                if (this.type === 'semi') {
+                    ctx.fillStyle = '#bdc3c7';
+                    for (let y = 20; y < this.height; y += 40) {
+                        ctx.beginPath();
+                        ctx.arc(this.x, y, 4, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
+
+                // Draw cross-hatch for impermeable
+                if (this.type === 'impermeable') {
+                    ctx.strokeStyle = '#95a5a6';
+                    ctx.lineWidth = 2;
+                    for (let y = 0; y < this.height; y += 20) {
+                        ctx.beginPath();
+                        ctx.moveTo(this.x - this.width / 2, y);
+                        ctx.lineTo(this.x + this.width / 2, y + 10);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        class Chamber {
+            constructor(x, y, width, height, side) {
+                this.x = x;
+                this.y = y;
+                this.width = width;
+                this.height = height;
+                this.side = side;
+                this.particles = [];
+                this.concentration = 0;
+                this.solution = 'water';
+            }
+
+            addParticles(type, count) {
+                for (let i = 0; i < count; i++) {
+                    const x = this.x + Math.random() * (this.width - 20) + 10;
+                    const y = this.y + Math.random() * (this.height - 20) + 10;
+                    const size = type === 'protein' ? 8 : type === 'water' ? 3 : 4;
+                    this.particles.push(new Particle(x, y, type, size));
+                }
+            }
+
+            removeAllParticles() {
+                this.particles = [];
+            }
+
+            getParticleCount(type = null) {
+                if (type) {
+                    return this.particles.filter(p => p.type === type).length;
+                }
+                return this.particles.length;
+            }
+
+            draw(ctx) {
+                // Draw chamber background
+                ctx.fillStyle = this.side === 'left' ? 'rgba(52, 152, 219, 0.1)' : 'rgba(231, 76, 60, 0.1)';
+                ctx.fillRect(this.x, this.y, this.width, this.height);
+
+                // Draw chamber border
+                ctx.strokeStyle = '#bdc3c7';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(this.x, this.y, this.width, this.height);
+
+                // Draw label
+                ctx.fillStyle = '#2c3e50';
+                ctx.font = 'bold 16px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(
+                    this.side === 'left' ? 'Left Chamber' : 'Right Chamber',
+                    this.x + this.width / 2,
+                    this.y + 25
+                );
+            }
+        }
+
+        class Simulator {
+            constructor() {
+                this.canvas = document.getElementById('simulationCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.isRunning = false;
+                this.startTime = 0;
+                this.animationId = null;
+
+                // Initialize chambers
+                this.leftChamber = new Chamber(50, 50, 300, 400, 'left');
+                this.rightChamber = new Chamber(450, 50, 300, 400, 'right');
+                this.membrane = new Membrane(400, 8, 400);
+
+                this.setupEventListeners();
+            }
+
+            setupEventListeners() {
+                // Temperature slider
+                const tempSlider = document.getElementById('temperature');
+                const tempValue = document.getElementById('tempValue');
+                tempSlider.addEventListener('input', (e) => {
+                    tempValue.textContent = e.target.value + '°C';
+                });
+
+                // Speed slider
+                const speedSlider = document.getElementById('animationSpeed');
+                const speedValue = document.getElementById('speedValue');
+                speedSlider.addEventListener('input', (e) => {
+                    speedValue.textContent = e.target.value + 'x';
+                });
+
+                // Membrane type
+                document.getElementById('membraneType').addEventListener('change', (e) => {
+                    this.membrane.type = e.target.value;
+                });
+
+                // Membrane permissions
+                document.getElementById('allowWater').addEventListener('change', (e) => {
+                    this.membrane.allows.water = e.target.checked;
+                });
+                document.getElementById('allowSmall').addEventListener('change', (e) => {
+                    this.membrane.allows.small = e.target.checked;
+                });
+                document.getElementById('allowLarge').addEventListener('change', (e) => {
+                    this.membrane.allows.large = e.target.checked;
+                });
+            }
+
+            start() {
+                if (!this.isRunning) {
+                    this.isRunning = true;
+                    this.startTime = Date.now();
+                    document.getElementById('simStatus').textContent = 'Running';
+                    this.animate();
+                }
+            }
+
+            pause() {
+                this.isRunning = false;
+                document.getElementById('simStatus').textContent = 'Paused';
+                if (this.animationId) {
+                    cancelAnimationFrame(this.animationId);
+                }
+            }
+
+            reset() {
+                console.log('Resetting simulation...');
+                this.pause();
+                this.leftChamber.removeAllParticles();
+                this.rightChamber.removeAllParticles();
+                this.startTime = 0;
+                document.getElementById('simTime').textContent = '0.0s';
+                document.getElementById('simStatus').textContent = 'Ready';
+                
+                // Reset UI values
+                document.getElementById('leftConc').textContent = '0 particles';
+                document.getElementById('rightConc').textContent = '0 particles';
+                document.getElementById('equilibrium').textContent = 'Not Reached';
+                document.getElementById('equilibrium').style.color = '#e74c3c';
+                
+                this.setupChambers();
+                this.draw();
+                this.updateUI();
+                console.log('Reset complete');
+            }
+
+            setupChambers() {
+                const leftConc = parseInt(document.getElementById('leftConcentration').value);
+                const rightConc = parseInt(document.getElementById('rightConcentration').value);
+                const leftSol = document.getElementById('leftSolution').value;
+                const rightSol = document.getElementById('rightSolution').value;
+
+                // Clear existing particles
+                this.leftChamber.removeAllParticles();
+                this.rightChamber.removeAllParticles();
+
+                // Add particles based on concentration
+                if (leftConc > 0) {
+                    const particleCount = Math.floor(leftConc / 5); // Scale down for performance
+                    this.leftChamber.addParticles(leftSol, particleCount);
+                }
+
+                if (rightConc > 0) {
+                    const particleCount = Math.floor(rightConc / 5);
+                    this.rightChamber.addParticles(rightSol, particleCount);
+                }
+
+                // Add water particles everywhere
+                this.leftChamber.addParticles('water', 30);
+                this.rightChamber.addParticles('water', 30);
+            }
+
+            animate() {
+                if (!this.isRunning) return;
+
+                const temperature = parseFloat(document.getElementById('temperature').value);
+                const speed = parseFloat(document.getElementById('animationSpeed').value);
+
+                // Update particles
+                [...this.leftChamber.particles, ...this.rightChamber.particles].forEach(particle => {
+                    particle.update(temperature, speed, this.canvas.width, this.canvas.height);
+                    this.membrane.checkCollision(particle);
+
+                    // Check if particle crossed chambers
+                    if (particle.x < 400 && !this.leftChamber.particles.includes(particle)) {
+                        // Moved to left chamber
+                        const index = this.rightChamber.particles.indexOf(particle);
+                        if (index > -1) {
+                            this.rightChamber.particles.splice(index, 1);
+                            this.leftChamber.particles.push(particle);
+                        }
+                    } else if (particle.x > 400 && !this.rightChamber.particles.includes(particle)) {
+                        // Moved to right chamber
+                        const index = this.leftChamber.particles.indexOf(particle);
+                        if (index > -1) {
+                            this.leftChamber.particles.splice(index, 1);
+                            this.rightChamber.particles.push(particle);
+                        }
+                    }
+                });
+
+                this.draw();
+                this.updateUI();
+
+                this.animationId = requestAnimationFrame(() => this.animate());
+            }
+
+            draw() {
+                // Clear canvas
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+                // Draw chambers
+                this.leftChamber.draw(this.ctx);
+                this.rightChamber.draw(this.ctx);
+
+                // Draw particles
+                [...this.leftChamber.particles, ...this.rightChamber.particles].forEach(particle => {
+                    particle.draw(this.ctx);
+                });
+
+                // Draw membrane
+                this.membrane.draw(this.ctx);
+            }
+
+            updateUI() {
+                if (this.isRunning) {
+                    const elapsed = (Date.now() - this.startTime) / 1000;
+                    document.getElementById('simTime').textContent = elapsed.toFixed(1) + 's';
+                }
+
+                // Update concentrations
+                document.getElementById('leftConc').textContent = this.leftChamber.getParticleCount() + ' particles';
+                document.getElementById('rightConc').textContent = this.rightChamber.getParticleCount() + ' particles';
+
+                // Check equilibrium
+                const leftTotal = this.leftChamber.getParticleCount();
+                const rightTotal = this.rightChamber.getParticleCount();
+                const difference = Math.abs(leftTotal - rightTotal);
+                
+                if (difference < 5) {
+                    document.getElementById('equilibrium').textContent = 'Reached!';
+                    document.getElementById('equilibrium').style.color = '#2ecc71';
+                } else {
+                    document.getElementById('equilibrium').textContent = 'Not Reached';
+                    document.getElementById('equilibrium').style.color = '#e74c3c';
+                }
+            }
+        }
+
+        // Global simulator instance
+        let simulator;
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            simulator = new Simulator();
+            simulator.setupChambers();
+            simulator.draw();
+        });
+
+        // Control functions
+        function startSimulation() {
+            simulator.start();
+        }
+
+        function pauseSimulation() {
+            simulator.pause();
+        }
+
+        function resetSimulation() {
+            simulator.reset();
+        }
+
+        // Preset scenarios
+        function loadPreset(presetName) {
+            const presets = {
+                'isotonic': {
+                    leftConc: 50, leftSol: 'salt',
+                    rightConc: 50, rightSol: 'salt',
+                    membrane: 'semi', water: true, small: false, large: false
+                },
+                'hypertonic': {
+                    leftConc: 25, leftSol: 'water',
+                    rightConc: 100, rightSol: 'salt',
+                    membrane: 'semi', water: true, small: false, large: false
+                },
+                'hypotonic': {
+                    leftConc: 100, leftSol: 'salt',
+                    rightConc: 25, rightSol: 'water',
+                    membrane: 'semi', water: true, small: false, large: false
+                },
+                'dialysis': {
+                    leftConc: 100, leftSol: 'protein',
+                    rightConc: 50, rightSol: 'salt',
+                    membrane: 'semi', water: true, small: true, large: false
+                },
+                'diffusion': {
+                    leftConc: 100, leftSol: 'salt',
+                    rightConc: 0, rightSol: 'water',
+                    membrane: 'permeable', water: true, small: true, large: true
+                },
+                'temperature': {
+                    leftConc: 50, leftSol: 'sugar',
+                    rightConc: 50, rightSol: 'sugar',
+                    membrane: 'permeable', water: true, small: true, large: true
+                }
+            };
+
+            const preset = presets[presetName];
+            if (preset) {
+                document.getElementById('leftConcentration').value = preset.leftConc;
+                document.getElementById('leftSolution').value = preset.leftSol;
+                document.getElementById('rightConcentration').value = preset.rightConc;
+                document.getElementById('rightSolution').value = preset.rightSol;
+                document.getElementById('membraneType').value = preset.membrane;
+                document.getElementById('allowWater').checked = preset.water;
+                document.getElementById('allowSmall').checked = preset.small;
+                document.getElementById('allowLarge').checked = preset.large;
+
+                // Update membrane settings
+                simulator.membrane.type = preset.membrane;
+                simulator.membrane.allows.water = preset.water;
+                simulator.membrane.allows.small = preset.small;
+                simulator.membrane.allows.large = preset.large;
+
+                // Reset and setup with new parameters
+                simulator.reset();
+            }
+        }
+    </script>
+</body>
+</html>

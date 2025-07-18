@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Diffusion Simulator - High School Biology</title>
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-bottom: 3px solid #4a90e2;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+
+        /* Main Container */
+        .container {
+            display: grid;
+            grid-template-columns: 320px 1fr 280px;
+            gap: 1rem;
+            padding: 1rem;
+            max-width: 1600px;
+            margin: 0 auto;
+            min-height: calc(100vh - 120px);
+        }
+
+        /* Control Panel */
+        .control-panel {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+
+        .control-section {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .control-section:last-child {
+            border-bottom: none;
+        }
+
+        .control-section h3 {
+            color: #2c3e50;
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+        }
+
+        .control-group {
+            margin-bottom: 1rem;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 0.3rem;
+            font-weight: 600;
+            color: #34495e;
+            font-size: 0.9rem;
+        }
+
+        /* Sliders */
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .slider {
+            flex: 1;
+            height: 6px;
+            border-radius: 3px;
+            background: #ddd;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #4a90e2;
+            cursor: pointer;
+        }
+
+        .slider-value {
+            background: #4a90e2;
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        /* Dropdowns and Selects */
+        select, .radio-group {
+            width: 100%;
+            padding: 0.5rem;
+            border: 2px solid #bdc3c7;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            background: white;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .radio-item {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 0.25rem;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #219a52;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #f39c12;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #e67e22;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .btn-info {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-info:hover {
+            background: #2980b9;
+        }
+
+        /* Simulation Area */
+        .simulation-area {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .simulation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .simulation-status {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .status-item {
+            background: #ecf0f1;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            color: #2c3e50;
+        }
+
+        .status-item.equilibrium {
+            background: #2ecc71;
+            color: white;
+        }
+
+        #simulationCanvas {
+            border: 2px solid #bdc3c7;
+            border-radius: 8px;
+            background: white;
+            flex: 1;
+            min-height: 500px;
+            cursor: crosshair;
+        }
+
+        /* Data Panel */
+        .data-panel {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+
+        .data-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .data-section h3 {
+            color: #2c3e50;
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+        }
+
+        .concentration-display {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+        }
+
+        .concentration-bar {
+            height: 20px;
+            background: #ecf0f1;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+            position: relative;
+        }
+
+        .concentration-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #e74c3c, #f39c12, #f1c40f);
+            transition: width 0.3s ease;
+        }
+
+        .concentration-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        /* Chart */
+        .chart-container {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 6px;
+            height: 200px;
+            position: relative;
+        }
+
+        #concentrationChart {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .container {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .control-panel, .data-panel {
+                order: 2;
+            }
+            
+            .simulation-area {
+                order: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 1rem;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .container {
+                padding: 0.5rem;
+            }
+            
+            .control-panel, .simulation-area, .data-panel {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1>💧 Osmosis Simulator</h1>
+        <p>Interactive Biology Learning Tool - Watch water move across semi-permeable membranes!</p>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <!-- Preset Scenarios -->
+            <div class="control-section">
+                <h3>🎯 Quick Start Examples</h3>
+                <div class="control-group">
+                    <label>Load Preset Scenario:</label>
+                    <select id="presetSelect">
+                        <option value="">Choose an example...</option>
+                        <option value="hypotonic">Hypotonic Solution</option>
+                        <option value="hypertonic">Hypertonic Solution</option>
+                        <option value="isotonic">Isotonic Solution</option>
+                        <option value="dialysis">Dialysis Tubing</option>
+                        <option value="plantcell">Plant Cell Turgor</option>
+                        <option value="redbloodcell">Red Blood Cell</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Osmosis Setup -->
+            <div class="control-section">
+                <h3>💧 Osmosis Setup</h3>
+                
+                <div class="control-group">
+                    <label>Left Side Solute Concentration:</label>
+                    <div class="slider-container">
+                        <input type="range" id="leftConcentration" class="slider" min="0" max="100" value="100">
+                        <span class="slider-value" id="leftConcValue">100%</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label>Right Side Solute Concentration:</label>
+                    <div class="slider-container">
+                        <input type="range" id="rightConcentration" class="slider" min="0" max="100" value="0">
+                        <span class="slider-value" id="rightConcValue">0%</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Environment -->
+            <div class="control-section">
+                <h3>🌡️ Environment</h3>
+                
+                <div class="control-group">
+                    <label>Temperature:</label>
+                    <div class="slider-container">
+                        <input type="range" id="temperature" class="slider" min="1" max="3" value="2">
+                        <span class="slider-value" id="tempValue">Room Temp</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label>Membrane Type:</label>
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="semiPermeable" name="barrier" value="semi" checked>
+                            <label for="semiPermeable">Semi-Permeable</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="impermeable" name="barrier" value="impermeable">
+                            <label for="impermeable">Impermeable</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Animation -->
+            <div class="control-section">
+                <h3>⚙️ Animation</h3>
+                
+                <div class="control-group">
+                    <label>Speed:</label>
+                    <div class="slider-container">
+                        <input type="range" id="animationSpeed" class="slider" min="0.5" max="3" step="0.5" value="1">
+                        <span class="slider-value" id="speedValue">Normal</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label>Particle Count:</label>
+                    <div class="slider-container">
+                        <input type="range" id="particleCount" class="slider" min="300" max="1500" step="100" value="800">
+                        <span class="slider-value" id="countValue">800</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Control Buttons -->
+            <div class="control-section">
+                <button class="btn btn-primary" id="startBtn">▶️ Start Simulation</button>
+                <button class="btn btn-secondary" id="pauseBtn">⏸️ Pause</button>
+                <button class="btn btn-danger" id="resetBtn">🔄 Reset</button>
+                <button class="btn btn-info" id="barrierBtn">🧱 Toggle Membrane</button>
+                <button class="btn btn-info" id="equilibriumBtn">⚖️ Check Equilibrium</button>
+            </div>
+        </div>
+
+        <!-- Simulation Area -->
+        <div class="simulation-area">
+            <div class="simulation-header">
+                <h3>🔬 Osmosis Container</h3>
+                <div class="simulation-status">
+                    <div class="status-item">
+                        <strong>Time:</strong> <span id="simTime">0.0s</span>
+                    </div>
+                    <div class="status-item">
+                        <strong>Status:</strong> <span id="simStatus">Ready</span>
+                    </div>
+                    <div class="status-item" id="equilibriumStatus">
+                        <strong>Equilibrium:</strong> <span id="equilibriumText">Not Reached</span>
+                    </div>
+                </div>
+            </div>
+            <canvas id="simulationCanvas" width="900" height="600"></canvas>
+        </div>
+
+        <!-- Data Panel -->
+        <div class="data-panel">
+            <!-- Live Data -->
+            <div class="data-section">
+                <h3>📊 Live Concentrations</h3>
+                <div class="concentration-display">
+                    <div style="margin-bottom: 0.5rem;">
+                        <strong>Left Side:</strong>
+                        <div class="concentration-bar">
+                            <div class="concentration-fill" id="leftBar"></div>
+                            <div class="concentration-text" id="leftPercent">100%</div>
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 0.5rem;">
+                        <strong>Right Side:</strong>
+                        <div class="concentration-bar">
+                            <div class="concentration-fill" id="rightBar"></div>
+                            <div class="concentration-text" id="rightPercent">0%</div>
+                        </div>
+                    </div>
+                    <div style="text-align: center; margin-top: 1rem;">
+                        <strong>Net Movement:</strong> <span id="netMovement">← Left to Right</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart -->
+            <div class="data-section">
+                <h3>📈 Concentration Over Time</h3>
+                <div class="chart-container">
+                    <canvas id="concentrationChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Educational Info -->
+            <div class="data-section">
+                <h3>🎓 Key Concepts</h3>
+                <div style="font-size: 0.9rem; line-height: 1.4; color: #7f8c8d;">
+                    <p><strong>Osmosis:</strong> Water moves across membrane toward higher solute concentration.</p>
+                    <p><strong>Semi-Permeable:</strong> Membrane allows water through but blocks solutes.</p>
+                    <p><strong>Water Potential:</strong> Water moves from high to low water potential.</p>
+                    <p><strong>Equilibrium:</strong> Equal water potential on both sides.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Core Classes for Osmosis Simulation
+        
+        class OsmosisParticle {
+            constructor(x, y, type) {
+                this.x = x;
+                this.y = y;
+                this.vx = (Math.random() - 0.5) * 2;
+                this.vy = (Math.random() - 0.5) * 2;
+                this.type = type;
+                this.size = this.getSize();
+                this.color = this.getColor();
+                this.mass = this.getMass();
+                this.trail = [];
+                this.canCrossMembrane = this.getMembranePermeability();
+            }
+
+            getSize() {
+                const sizes = {
+                    'water': 2,
+                    'salt': 3,
+                    'sugar': 4,
+                    'protein': 6
+                };
+                return sizes[this.type] || 3;
+            }
+
+            getColor() {
+                const colors = {
+                    'water': '#3498db',
+                    'salt': '#e74c3c',
+                    'sugar': '#2ecc71',
+                    'protein': '#9b59b6'
+                };
+                return colors[this.type] || '#95a5a6';
+            }
+
+            getMass() {
+                const masses = {
+                    'water': 1,
+                    'salt': 2,
+                    'sugar': 3,
+                    'protein': 6
+                };
+                return masses[this.type] || 2;
+            }
+
+            getMembranePermeability() {
+                // Only water can cross semi-permeable membranes
+                return this.type === 'water';
+            }
+
+            update(temperature, speed, container) {
+                // Brownian motion with temperature effects
+                const tempFactor = temperature * 0.5;
+                const massEffect = 1 / Math.sqrt(this.mass);
+                const speedMultiplier = speed;
+
+                // Random walk with Gaussian distribution
+                const randomX = (Math.random() - 0.5) * 2;
+                const randomY = (Math.random() - 0.5) * 2;
+
+                // Apply temperature and mass effects
+                this.vx += randomX * tempFactor * massEffect * speedMultiplier;
+                this.vy += randomY * tempFactor * massEffect * speedMultiplier;
+
+                // Osmotic pressure gradient for water molecules
+                if (this.type === 'water') {
+                    const leftSoluteDensity = container.getLocalSoluteDensity(this.x - 50, this.y);
+                    const rightSoluteDensity = container.getLocalSoluteDensity(this.x + 50, this.y);
+                    // Water moves toward higher solute concentration
+                    const osmoticForce = (rightSoluteDensity - leftSoluteDensity) * 0.2 * speedMultiplier;
+                    this.vx += osmoticForce;
+                }
+
+                // Apply damping
+                this.vx *= 0.99;
+                this.vy *= 0.99;
+
+                // Limit velocity
+                const maxVel = 3 * tempFactor * speedMultiplier;
+                this.vx = Math.max(-maxVel, Math.min(maxVel, this.vx));
+                this.vy = Math.max(-maxVel, Math.min(maxVel, this.vy));
+
+                // Update position
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // Update trail
+                this.trail.push({x: this.x, y: this.y});
+                if (this.trail.length > 5) {
+                    this.trail.shift();
+                }
+
+                // Boundary conditions
+                this.checkBoundaries(container);
+            }
+
+            checkBoundaries(container) {
+                // Bounce off walls
+                if (this.x <= this.size || this.x >= container.width - this.size) {
+                    this.vx *= -1;
+                    this.x = Math.max(this.size, Math.min(container.width - this.size, this.x));
+                }
+                if (this.y <= this.size || this.y >= container.height - this.size) {
+                    this.vy *= -1;
+                    this.y = Math.max(this.size, Math.min(container.height - this.size, this.y));
+                }
+
+                // Membrane collision
+                if (container.hasMembrane) {
+                    const membraneX = container.width / 2;
+                    const membraneWidth = 8;
+                    
+                    if (this.x >= membraneX - membraneWidth/2 - this.size && 
+                        this.x <= membraneX + membraneWidth/2 + this.size &&
+                        this.y >= container.height * 0.1 && 
+                        this.y <= container.height * 0.9) {
+                        
+                        // Check if particle can cross membrane
+                        if (container.membraneType === 'semi' && !this.canCrossMembrane) {
+                            // Solutes bounce off semi-permeable membrane
+                            this.vx *= -1;
+                            if (this.x < membraneX) {
+                                this.x = membraneX - membraneWidth/2 - this.size;
+                            } else {
+                                this.x = membraneX + membraneWidth/2 + this.size;
+                            }
+                        } else if (container.membraneType === 'impermeable') {
+                            // Nothing crosses impermeable membrane
+                            this.vx *= -1;
+                            if (this.x < membraneX) {
+                                this.x = membraneX - membraneWidth/2 - this.size;
+                            } else {
+                                this.x = membraneX + membraneWidth/2 + this.size;
+                            }
+                        }
+                    }
+                }
+            }
+
+            draw(ctx) {
+                // Draw trail
+                ctx.strokeStyle = this.color;
+                ctx.lineWidth = 1;
+                ctx.globalAlpha = 0.3;
+                ctx.beginPath();
+                for (let i = 0; i < this.trail.length - 1; i++) {
+                    const point = this.trail[i];
+                    if (i === 0) {
+                        ctx.moveTo(point.x, point.y);
+                    } else {
+                        ctx.lineTo(point.x, point.y);
+                    }
+                }
+                ctx.stroke();
+
+                // Draw particle
+                ctx.globalAlpha = 1;
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#2c3e50';
+                ctx.lineWidth = 0.5;
+                ctx.stroke();
+            }
+        }
+
+        class OsmosisContainer {
+            constructor(width, height) {
+                this.width = width;
+                this.height = height;
+                this.hasMembrane = true;
+                this.membraneType = 'semi'; // 'semi' or 'impermeable'
+                this.particles = [];
+                this.densityGrid = [];
+                this.soluteDensityGrid = [];
+                this.gridSize = 50;
+                this.initializeDensityGrid();
+            }
+
+            initializeDensityGrid() {
+                const rows = Math.ceil(this.height / this.gridSize);
+                const cols = Math.ceil(this.width / this.gridSize);
+                this.densityGrid = Array(rows).fill().map(() => Array(cols).fill(0));
+                this.soluteDensityGrid = Array(rows).fill().map(() => Array(cols).fill(0));
+            }
+
+            addParticles(type, count, side = 'left') {
+                const startX = side === 'left' ? this.width * 0.05 : this.width * 0.55;
+                const endX = side === 'left' ? this.width * 0.45 : this.width * 0.95;
+                
+                for (let i = 0; i < count; i++) {
+                    const x = startX + Math.random() * (endX - startX);
+                    const y = this.height * 0.1 + Math.random() * (this.height * 0.8);
+                    this.particles.push(new OsmosisParticle(x, y, type));
+                }
+            }
+
+            removeAllParticles() {
+                this.particles = [];
+            }
+
+            updateDensityGrid() {
+                // Reset grids
+                this.densityGrid = this.densityGrid.map(row => row.map(() => 0));
+                this.soluteDensityGrid = this.soluteDensityGrid.map(row => row.map(() => 0));
+                
+                // Count particles in each grid cell
+                this.particles.forEach(particle => {
+                    const gridX = Math.floor(particle.x / this.gridSize);
+                    const gridY = Math.floor(particle.y / this.gridSize);
+                    
+                    if (gridX >= 0 && gridX < this.densityGrid[0].length &&
+                        gridY >= 0 && gridY < this.densityGrid.length) {
+                        this.densityGrid[gridY][gridX]++;
+                        
+                        // Count solutes separately
+                        if (particle.type !== 'water') {
+                            this.soluteDensityGrid[gridY][gridX]++;
+                        }
+                    }
+                });
+            }
+
+            getLocalDensity(x, y) {
+                const gridX = Math.floor(x / this.gridSize);
+                const gridY = Math.floor(y / this.gridSize);
+                
+                if (gridX >= 0 && gridX < this.densityGrid[0].length &&
+                    gridY >= 0 && gridY < this.densityGrid.length) {
+                    return this.densityGrid[gridY][gridX];
+                }
+                return 0;
+            }
+
+            getLocalSoluteDensity(x, y) {
+                const gridX = Math.floor(x / this.gridSize);
+                const gridY = Math.floor(y / this.gridSize);
+                
+                if (gridX >= 0 && gridX < this.soluteDensityGrid[0].length &&
+                    gridY >= 0 && gridY < this.soluteDensityGrid.length) {
+                    return this.soluteDensityGrid[gridY][gridX];
+                }
+                return 0;
+            }
+
+            getConcentrations() {
+                const leftParticles = this.particles.filter(p => p.x < this.width / 2).length;
+                const rightParticles = this.particles.filter(p => p.x >= this.width / 2).length;
+                const total = this.particles.length;
+                
+                return {
+                    left: total > 0 ? (leftParticles / total) * 100 : 0,
+                    right: total > 0 ? (rightParticles / total) * 100 : 0,
+                    total: total
+                };
+            }
+
+            draw(ctx) {
+                // Draw container background
+                ctx.fillStyle = '#f8f9fa';
+                ctx.fillRect(0, 0, this.width, this.height);
+
+                // Draw container border
+                ctx.strokeStyle = '#bdc3c7';
+                ctx.lineWidth = 3;
+                ctx.strokeRect(0, 0, this.width, this.height);
+
+                // Draw concentration heat map (optional)
+                this.drawHeatMap(ctx);
+
+                // Draw center line
+                ctx.strokeStyle = '#ecf0f1';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 5]);
+                ctx.beginPath();
+                ctx.moveTo(this.width / 2, 0);
+                ctx.lineTo(this.width / 2, this.height);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // Draw membrane if present
+                if (this.hasMembrane) {
+                    if (this.membraneType === 'semi') {
+                        // Semi-permeable membrane with pores
+                        ctx.fillStyle = '#7f8c8d';
+                        ctx.fillRect(this.width / 2 - 4, this.height * 0.1, 8, this.height * 0.8);
+                        
+                        // Draw pores
+                        ctx.fillStyle = '#bdc3c7';
+                        for (let y = this.height * 0.15; y < this.height * 0.85; y += 30) {
+                            ctx.beginPath();
+                            ctx.arc(this.width / 2, y, 3, 0, Math.PI * 2);
+                            ctx.fill();
+                        }
+                    } else if (this.membraneType === 'impermeable') {
+                        // Solid impermeable membrane
+                        ctx.fillStyle = '#2c3e50';
+                        ctx.fillRect(this.width / 2 - 4, this.height * 0.1, 8, this.height * 0.8);
+                        
+                        // Draw cross-hatch pattern
+                        ctx.strokeStyle = '#95a5a6';
+                        ctx.lineWidth = 2;
+                        for (let y = this.height * 0.1; y < this.height * 0.9; y += 20) {
+                            ctx.beginPath();
+                            ctx.moveTo(this.width / 2 - 4, y);
+                            ctx.lineTo(this.width / 2 + 4, y + 10);
+                            ctx.stroke();
+                        }
+                    }
+                }
+
+                // Draw side labels
+                ctx.fillStyle = '#7f8c8d';
+                ctx.font = '18px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('Left Side', this.width * 0.25, 30);
+                ctx.fillText('Right Side', this.width * 0.75, 30);
+            }
+
+            drawHeatMap(ctx) {
+                const cellSize = this.gridSize;
+                const maxDensity = Math.max(...this.densityGrid.flat());
+                
+                if (maxDensity === 0) return;
+
+                ctx.globalAlpha = 0.2;
+                for (let y = 0; y < this.densityGrid.length; y++) {
+                    for (let x = 0; x < this.densityGrid[y].length; x++) {
+                        const density = this.densityGrid[y][x];
+                        if (density > 0) {
+                            const intensity = density / maxDensity;
+                            const red = Math.floor(255 * intensity);
+                            const green = Math.floor(255 * (1 - intensity));
+                            ctx.fillStyle = `rgb(${red}, ${green}, 0)`;
+                            ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+                        }
+                    }
+                }
+                ctx.globalAlpha = 1;
+            }
+        }
+
+        class ConcentrationTracker {
+            constructor() {
+                this.history = [];
+                this.maxHistoryLength = 100;
+                this.equilibriumThreshold = 5; // 5% difference
+            }
+
+            addDataPoint(leftConc, rightConc, time) {
+                this.history.push({
+                    time: time,
+                    left: leftConc,
+                    right: rightConc,
+                    difference: Math.abs(leftConc - rightConc)
+                });
+
+                if (this.history.length > this.maxHistoryLength) {
+                    this.history.shift();
+                }
+            }
+
+            isEquilibrium() {
+                if (this.history.length < 10) return false;
+                
+                const recent = this.history.slice(-10);
+                const avgDifference = recent.reduce((sum, point) => sum + point.difference, 0) / recent.length;
+                
+                return avgDifference < this.equilibriumThreshold;
+            }
+
+            getNetMovement() {
+                if (this.history.length < 2) return 'No Movement';
+                
+                const latest = this.history[this.history.length - 1];
+                const previous = this.history[this.history.length - 2];
+                
+                const leftChange = latest.left - previous.left;
+                
+                if (Math.abs(leftChange) < 0.1) return 'Equilibrium';
+                return leftChange > 0 ? 'Right to Left' : 'Left to Right';
+            }
+
+            drawChart(ctx, width, height) {
+                ctx.clearRect(0, 0, width, height);
+                
+                if (this.history.length < 2) return;
+
+                const margin = 20;
+                const chartWidth = width - 2 * margin;
+                const chartHeight = height - 2 * margin;
+
+                // Draw axes
+                ctx.strokeStyle = '#bdc3c7';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(margin, margin);
+                ctx.lineTo(margin, height - margin);
+                ctx.lineTo(width - margin, height - margin);
+                ctx.stroke();
+
+                // Draw grid
+                ctx.strokeStyle = '#ecf0f1';
+                ctx.lineWidth = 0.5;
+                for (let i = 0; i <= 10; i++) {
+                    const y = margin + (i / 10) * chartHeight;
+                    ctx.beginPath();
+                    ctx.moveTo(margin, y);
+                    ctx.lineTo(width - margin, y);
+                    ctx.stroke();
+                }
+
+                // Draw concentration lines
+                const maxTime = Math.max(...this.history.map(p => p.time));
+                const minTime = Math.min(...this.history.map(p => p.time));
+                const timeRange = maxTime - minTime || 1;
+
+                // Left concentration (red)
+                ctx.strokeStyle = '#e74c3c';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                this.history.forEach((point, index) => {
+                    const x = margin + ((point.time - minTime) / timeRange) * chartWidth;
+                    const y = height - margin - (point.left / 100) * chartHeight;
+                    
+                    if (index === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                });
+                ctx.stroke();
+
+                // Right concentration (blue)
+                ctx.strokeStyle = '#3498db';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                this.history.forEach((point, index) => {
+                    const x = margin + ((point.time - minTime) / timeRange) * chartWidth;
+                    const y = height - margin - (point.right / 100) * chartHeight;
+                    
+                    if (index === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                });
+                ctx.stroke();
+
+                // Draw labels
+                ctx.fillStyle = '#2c3e50';
+                ctx.font = '10px Arial';
+                ctx.textAlign = 'left';
+                ctx.fillText('Left', margin + 5, margin + 15);
+                ctx.fillStyle = '#e74c3c';
+                ctx.fillRect(margin + 30, margin + 8, 15, 2);
+                
+                ctx.fillStyle = '#2c3e50';
+                ctx.fillText('Right', margin + 5, margin + 30);
+                ctx.fillStyle = '#3498db';
+                ctx.fillRect(margin + 35, margin + 23, 15, 2);
+            }
+        }
+
+        class OsmosisSimulator {
+            constructor() {
+                this.canvas = document.getElementById('simulationCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.chartCanvas = document.getElementById('concentrationChart');
+                this.chartCtx = this.chartCanvas.getContext('2d');
+                
+                this.container = new OsmosisContainer(this.canvas.width, this.canvas.height);
+                this.tracker = new ConcentrationTracker();
+                
+                this.isRunning = false;
+                this.startTime = 0;
+                this.animationId = null;
+                this.lastUpdateTime = 0;
+
+                this.setupEventListeners();
+                this.loadPresetScenarios();
+                this.reset();
+            }
+
+            setupEventListeners() {
+                // Sliders
+                document.getElementById('leftConcentration').addEventListener('input', (e) => {
+                    document.getElementById('leftConcValue').textContent = e.target.value + '%';
+                });
+
+                document.getElementById('rightConcentration').addEventListener('input', (e) => {
+                    document.getElementById('rightConcValue').textContent = e.target.value + '%';
+                });
+
+                document.getElementById('temperature').addEventListener('input', (e) => {
+                    const temps = ['Cold', 'Room Temp', 'Hot'];
+                    document.getElementById('tempValue').textContent = temps[e.target.value - 1];
+                });
+
+                document.getElementById('animationSpeed').addEventListener('input', (e) => {
+                    const speeds = ['Slow', 'Normal', 'Fast'];
+                    const index = Math.floor((e.target.value - 0.5) / 0.5);
+                    document.getElementById('speedValue').textContent = speeds[Math.min(index, 2)];
+                });
+
+                document.getElementById('particleCount').addEventListener('input', (e) => {
+                    document.getElementById('countValue').textContent = e.target.value;
+                });
+
+                // Buttons
+                document.getElementById('startBtn').addEventListener('click', () => this.start());
+                document.getElementById('pauseBtn').addEventListener('click', () => this.pause());
+                document.getElementById('resetBtn').addEventListener('click', () => this.reset());
+                document.getElementById('barrierBtn').addEventListener('click', () => this.toggleBarrier());
+                document.getElementById('equilibriumBtn').addEventListener('click', () => this.checkEquilibrium());
+
+                // Preset selector
+                document.getElementById('presetSelect').addEventListener('change', (e) => {
+                    if (e.target.value) {
+                        this.loadScenario(e.target.value);
+                    }
+                });
+
+                // Canvas click for local concentration
+                this.canvas.addEventListener('click', (e) => {
+                    const rect = this.canvas.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const density = this.container.getLocalDensity(x, y);
+                    alert(`Local particle density: ${density} particles in this area`);
+                });
+            }
+
+            loadPresetScenarios() {
+                this.presets = {
+                    'hypotonic': {
+                        leftConc: 20, rightConc: 80,
+                        temp: 2, membrane: 'semi', description: 'Hypotonic solution - water moves in'
+                    },
+                    'hypertonic': {
+                        leftConc: 80, rightConc: 20,
+                        temp: 2, membrane: 'semi', description: 'Hypertonic solution - water moves out'
+                    },
+                    'isotonic': {
+                        leftConc: 50, rightConc: 50,
+                        temp: 2, membrane: 'semi', description: 'Isotonic solution - no net movement'
+                    },
+                    'dialysis': {
+                        leftConc: 100, rightConc: 0,
+                        temp: 2, membrane: 'semi', description: 'Dialysis tubing - solutes blocked'
+                    },
+                    'plantcell': {
+                        leftConc: 30, rightConc: 70,
+                        temp: 2, membrane: 'semi', description: 'Plant cell turgor pressure'
+                    },
+                    'redbloodcell': {
+                        leftConc: 90, rightConc: 10,
+                        temp: 2, membrane: 'semi', description: 'Red blood cell in saline'
+                    }
+                };
+            }
+
+            loadScenario(scenarioName) {
+                const preset = this.presets[scenarioName];
+                if (!preset) return;
+
+                document.getElementById('leftConcentration').value = preset.leftConc;
+                document.getElementById('rightConcentration').value = preset.rightConc;
+                document.getElementById('temperature').value = preset.temp;
+                
+                // Update membrane
+                if (preset.membrane === 'semi') {
+                    document.getElementById('semiPermeable').checked = true;
+                    this.container.membraneType = 'semi';
+                } else {
+                    document.getElementById('impermeable').checked = true;
+                    this.container.membraneType = 'impermeable';
+                }
+
+                // Update display values
+                document.getElementById('leftConcValue').textContent = preset.leftConc + '%';
+                document.getElementById('rightConcValue').textContent = preset.rightConc + '%';
+                const temps = ['Cold', 'Room Temp', 'Hot'];
+                document.getElementById('tempValue').textContent = temps[preset.temp - 1];
+
+                this.reset();
+            }
+
+            start() {
+                if (!this.isRunning) {
+                    this.isRunning = true;
+                    this.startTime = Date.now();
+                    this.lastUpdateTime = this.startTime;
+                    document.getElementById('simStatus').textContent = 'Running';
+                    this.animate();
+                }
+            }
+
+            pause() {
+                this.isRunning = false;
+                document.getElementById('simStatus').textContent = 'Paused';
+                if (this.animationId) {
+                    cancelAnimationFrame(this.animationId);
+                }
+            }
+
+            reset() {
+                this.pause();
+                this.container.removeAllParticles();
+                this.tracker = new ConcentrationTracker();
+                this.startTime = 0;
+                this.lastUpdateTime = 0;
+                
+                document.getElementById('simTime').textContent = '0.0s';
+                document.getElementById('simStatus').textContent = 'Ready';
+                document.getElementById('equilibriumStatus').className = 'status-item';
+                document.getElementById('equilibriumText').textContent = 'Not Reached';
+
+                this.setupParticles();
+                this.updateUI();
+                this.draw();
+            }
+
+            setupParticles() {
+                const leftConc = parseInt(document.getElementById('leftConcentration').value);
+                const rightConc = parseInt(document.getElementById('rightConcentration').value);
+                const totalCount = parseInt(document.getElementById('particleCount').value);
+
+                // Fixed to salt for osmosis demonstration
+                const soluteType = 'salt';
+
+                // Add solute particles based on concentration
+                const totalSolutes = Math.floor(totalCount * 0.3); // 30% solutes
+                const totalWater = totalCount - totalSolutes;
+                
+                if (leftConc > 0) {
+                    const leftSolutes = Math.floor((leftConc / 100) * totalSolutes);
+                    if (leftSolutes > 0) {
+                        this.container.addParticles(soluteType, leftSolutes, 'left');
+                    }
+                }
+                
+                if (rightConc > 0) {
+                    const rightSolutes = Math.floor((rightConc / 100) * totalSolutes);
+                    if (rightSolutes > 0) {
+                        this.container.addParticles(soluteType, rightSolutes, 'right');
+                    }
+                }
+
+                // Add water particles evenly distributed
+                const leftWater = Math.floor(totalWater * 0.5);
+                const rightWater = totalWater - leftWater;
+                
+                if (leftWater > 0) {
+                    this.container.addParticles('water', leftWater, 'left');
+                }
+                if (rightWater > 0) {
+                    this.container.addParticles('water', rightWater, 'right');
+                }
+
+                // Update membrane state
+                const membraneRadio = document.querySelector('input[name="barrier"]:checked').value;
+                this.container.hasMembrane = true;
+                this.container.membraneType = membraneRadio;
+            }
+
+            toggleBarrier() {
+                // Toggle between semi-permeable and impermeable
+                this.container.membraneType = this.container.membraneType === 'semi' ? 'impermeable' : 'semi';
+                
+                if (this.container.membraneType === 'semi') {
+                    document.getElementById('semiPermeable').checked = true;
+                } else {
+                    document.getElementById('impermeable').checked = true;
+                }
+            }
+
+            checkEquilibrium() {
+                const isEquilibrium = this.tracker.isEquilibrium();
+                const conc = this.container.getConcentrations();
+                
+                if (isEquilibrium) {
+                    alert(`Equilibrium reached! Left: ${conc.left.toFixed(1)}%, Right: ${conc.right.toFixed(1)}%`);
+                } else {
+                    alert(`Not at equilibrium yet. Left: ${conc.left.toFixed(1)}%, Right: ${conc.right.toFixed(1)}%`);
+                }
+            }
+
+            animate() {
+                if (!this.isRunning) return;
+
+                const now = Date.now();
+                const deltaTime = now - this.lastUpdateTime;
+                this.lastUpdateTime = now;
+
+                const temperature = parseFloat(document.getElementById('temperature').value);
+                const speed = parseFloat(document.getElementById('animationSpeed').value);
+
+                // Update particles
+                this.container.particles.forEach(particle => {
+                    particle.update(temperature, speed, this.container);
+                });
+
+                // Update density grid every 10 frames for performance
+                if (now % 10 === 0) {
+                    this.container.updateDensityGrid();
+                }
+
+                this.draw();
+                this.updateUI();
+
+                this.animationId = requestAnimationFrame(() => this.animate());
+            }
+
+            draw() {
+                // Clear canvas
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+                // Draw container
+                this.container.draw(this.ctx);
+
+                // Draw particles
+                this.container.particles.forEach(particle => {
+                    particle.draw(this.ctx);
+                });
+            }
+
+            updateUI() {
+                if (this.isRunning) {
+                    const elapsed = (Date.now() - this.startTime) / 1000;
+                    document.getElementById('simTime').textContent = elapsed.toFixed(1) + 's';
+                }
+
+                // Update concentrations
+                const conc = this.container.getConcentrations();
+                
+                // Update bars
+                document.getElementById('leftBar').style.width = conc.left + '%';
+                document.getElementById('rightBar').style.width = conc.right + '%';
+                document.getElementById('leftPercent').textContent = conc.left.toFixed(1) + '%';
+                document.getElementById('rightPercent').textContent = conc.right.toFixed(1) + '%';
+
+                // Add to tracker
+                if (this.isRunning) {
+                    const elapsed = (Date.now() - this.startTime) / 1000;
+                    this.tracker.addDataPoint(conc.left, conc.right, elapsed);
+                }
+
+                // Update net movement
+                const netMovement = this.tracker.getNetMovement();
+                document.getElementById('netMovement').textContent = netMovement;
+
+                // Update equilibrium status
+                const isEquilibrium = this.tracker.isEquilibrium();
+                if (isEquilibrium) {
+                    document.getElementById('equilibriumStatus').className = 'status-item equilibrium';
+                    document.getElementById('equilibriumText').textContent = 'Reached!';
+                } else {
+                    document.getElementById('equilibriumStatus').className = 'status-item';
+                    document.getElementById('equilibriumText').textContent = 'Not Reached';
+                }
+
+                // Update chart
+                this.tracker.drawChart(this.chartCtx, this.chartCanvas.width, this.chartCanvas.height);
+            }
+        }
+
+        // Initialize simulator when page loads
+        let simulator;
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            simulator = new OsmosisSimulator();
+        });
+    </script>
+</body>
+</html>

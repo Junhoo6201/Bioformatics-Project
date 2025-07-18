@@ -3,25 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Protein Synthesis Calculator</title>
+    <title>Biology Calculator Suite</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="app-container">
         <header class="app-header">
-            <h1>🧬 Protein Synthesis Calculator</h1>
-            <p class="subtitle">From DNA to Protein</p>
+            <h1>🧬 Biology Calculator Suite</h1>
+            <p class="subtitle">Interactive Tools for Biological Sciences</p>
         </header>
 
-        <nav class="tab-navigation">
-            <button class="tab-btn active" data-tab="transcription">Transcription/Translation</button>
-            <button class="tab-btn" data-tab="mutation">Mutations</button>
-            <button class="tab-btn" data-tab="education">Education</button>
-        </nav>
+        <!-- Main Selection Screen -->
+        <div id="main-selection" class="main-selection active">
+            <h2 class="selection-title">Choose Your Calculator</h2>
+            <div class="calculator-grid">
+                <div class="calculator-card" onclick="selectCalculator('protein-synthesis')">
+                    <div class="calculator-icon">🧬</div>
+                    <h3>Protein Synthesis</h3>
+                    <p>Transcribe DNA to RNA and translate to proteins. Includes mutation analysis.</p>
+                    <div class="features-list">
+                        <span class="feature">• DNA/RNA/mRNA input</span>
+                        <span class="feature">• Mutation simulator</span>
+                        <span class="feature">• Start/stop codon detection</span>
+                        <span class="feature">• Eukaryotic/Prokaryotic modes</span>
+                    </div>
+                </div>
+                
+                <div class="calculator-card" onclick="selectCalculator('osmosis-diffusion')">
+                    <div class="calculator-icon">💧</div>
+                    <h3>Osmosis Simulator</h3>
+                    <p>Visualize water movement across semi-permeable membranes with interactive simulations.</p>
+                    <div class="features-list">
+                        <span class="feature">• Real-time water particle animation</span>
+                        <span class="feature">• Semi-permeable membrane</span>
+                        <span class="feature">• Solute concentration gradients</span>
+                        <span class="feature">• Osmotic pressure demonstration</span>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        <div class="content-area">
-            <!-- 전사/번역 탭 -->
+        <!-- Calculator Sections -->
+        <div id="calculator-container" class="calculator-container">
+            <nav class="breadcrumb">
+                <button class="back-btn" onclick="backToSelection()">
+                    <span>← Back to Selection</span>
+                </button>
+                <span class="current-calculator" id="current-calculator-name"></span>
+            </nav>
+
+            <!-- Protein Synthesis Calculator -->
+            <div id="protein-synthesis-calculator" class="calculator-section hidden">
+                <nav class="tab-navigation">
+                    <button class="tab-btn active" data-tab="transcription">Transcription/Translation</button>
+                    <button class="tab-btn" data-tab="mutation">Mutations</button>
+                    <button class="tab-btn" data-tab="education">Education</button>
+                </nav>
+                
+                <!-- Tab Contents for Protein Synthesis -->
+                <div class="content-area">
+            <!-- Transcription/Translation Tab -->
             <div id="transcription" class="tab-content active">
                 <div class="input-section">
                     <h2>Enter Sequence</h2>
@@ -321,54 +363,138 @@
                     </div>
                 </div>
             </div>
-
-            <!-- 세포 비교 탭 -->
-            <div id="comparison" class="tab-content">
-                <div class="input-section">
-                    <h2>Eukaryotic vs Prokaryotic</h2>
-                    
-                    <div class="strand-selector">
-                        <label class="radio-container">
-                            <input type="radio" name="comparison-strand" value="coding" checked>
-                            <span class="radio-label">Coding DNA (5' → 3')</span>
-                        </label>
-                        <label class="radio-container">
-                            <input type="radio" name="comparison-strand" value="template">
-                            <span class="radio-label">Template DNA (3' → 5')</span>
-                        </label>
-                        <label class="radio-container">
-                            <input type="radio" name="comparison-strand" value="mrna">
-                            <span class="radio-label">mRNA (5' → 3')</span>
-                        </label>
-                    </div>
-                    
-                    <textarea id="comparison-dna-input" placeholder="Enter coding DNA sequence (e.g., ATGGAATAG)" class="dna-input"></textarea>
-                    <button class="process-btn" onclick="processComparison()">
-                        <span class="btn-text">Compare</span>
-                        <span class="btn-icon">🔬</span>
-                    </button>
                 </div>
+            </div>
 
-                <div id="comparison-results" class="results-section hidden">
-                    <h2>Translation Results by Cell Type</h2>
-                    <div class="comparison-grid">
-                        <div class="comparison-column">
-                            <h3>Eukaryotic</h3>
-                            <p class="cell-info">Start codons: AUG</p>
-                            <div class="result-item">
-                                <span class="result-label">Protein:</span>
-                                <span id="eukaryotic-protein" class="result-sequence"></span>
+            <!-- Osmosis Calculator -->
+            <div id="osmosis-diffusion-calculator" class="calculator-section hidden">
+                <nav class="tab-navigation">
+                    <button class="tab-btn active" data-tab="osmosis">Osmosis Simulator</button>
+                </nav>
+                
+                <!-- Tab Contents for Osmosis -->
+                <div class="content-area">
+            <!-- Osmosis Simulator -->
+            <div id="osmosis" class="tab-content active">
+                <div class="input-section">
+                    <h2>Osmosis Simulator</h2>
+                    <p class="section-intro">Visualize water movement across semi-permeable membranes</p>
+                    
+                    <div class="simulator-controls">
+                        
+                        <div class="simulator-controls">
+                            <div class="control-row">
+                                <div class="control-group">
+                                    <label>Solute Type:</label>
+                                    <select id="solute-type" class="control-select">
+                                        <option value="salt">Salt (NaCl)</option>
+                                        <option value="glucose">Glucose</option>
+                                        <option value="protein">Protein</option>
+                                    </select>
+                                </div>
+                                <div class="control-group">
+                                    <label>Membrane:</label>
+                                    <select id="permeability" class="control-select">
+                                        <option value="semi" selected>Semi-permeable</option>
+                                        <option value="impermeable">Impermeable</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="control-row">
+                                <div class="control-group">
+                                    <label>Left Concentration:</label>
+                                    <div class="concentration-control">
+                                        <input type="range" id="conc-left-slider" min="0" max="100" value="80" class="concentration-slider">
+                                        <span id="conc-left-display">80 mM</span>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label>Right Concentration:</label>
+                                    <div class="concentration-control">
+                                        <input type="range" id="conc-right-slider" min="0" max="100" value="20" class="concentration-slider">
+                                        <span id="conc-right-display">20 mM</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="control-row">
+                                <div class="control-group">
+                                    <label>Temperature:</label>
+                                    <div class="temperature-control">
+                                        <input type="range" id="temperature" min="0" max="100" value="37" class="temperature-slider">
+                                        <span id="temp-display">37°C</span>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label>Animation Speed:</label>
+                                    <div class="speed-control">
+                                        <input type="range" id="speed" min="0.1" max="3" step="0.1" value="1" class="speed-slider">
+                                        <span id="speed-display">1x</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="comparison-column">
-                            <h3>Prokaryotic</h3>
-                            <p class="cell-info">Start codons: AUG, GUG, UUG</p>
-                            <div class="result-item">
-                                <span class="result-label">Protein:</span>
-                                <span id="prokaryotic-protein" class="result-sequence"></span>
+                        
+                        <button class="process-btn" onclick="testStartSimulation()">
+                            <span class="btn-text">Start Simulation</span>
+                            <span class="btn-icon">▶️</span>
+                        </button>
+                        
+                        <button class="process-btn secondary" onclick="resetOsmosisSimulation()">
+                            <span class="btn-text">Reset</span>
+                            <span class="btn-icon">🔄</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="simulation-area">
+                    <canvas id="osmosis-canvas" width="800" height="400"></canvas>
+                    
+                    <div class="simulation-info">
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <span class="info-label">Time:</span>
+                                <span id="sim-time">0s</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Net Movement:</span>
+                                <span id="net-movement">→</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Equilibrium:</span>
+                                <span id="equilibrium-status">Not reached</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Rate:</span>
+                                <span id="osmosis-rate">0 molecules/s</span>
                             </div>
                         </div>
                     </div>
+                </div>
+                
+                <div class="results-section">
+                    <h3>Key Concepts</h3>
+                    <div class="concept-grid">
+                        <div class="concept-card">
+                            <h4>Diffusion</h4>
+                            <p>Random movement of particles from high to low concentration</p>
+                        </div>
+                        <div class="concept-card">
+                            <h4>Osmosis</h4>
+                            <p>Diffusion of water across a semipermeable membrane</p>
+                        </div>
+                        <div class="concept-card">
+                            <h4>Concentration Gradient</h4>
+                            <p>Difference in concentration that drives molecular movement</p>
+                        </div>
+                        <div class="concept-card">
+                            <h4>Equilibrium</h4>
+                            <p>State where concentrations are equal on both sides</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
                 </div>
             </div>
         </div>
@@ -379,5 +505,1025 @@
     </div>
 
     <script src="app.js"></script>
+    <script src="simple_osmosis.js"></script>
+    <script>
+        // Ultra-simple osmosis simulation
+        function startOsmosisSimulation() {
+            console.log('Starting osmosis simulation...');
+            const canvas = document.getElementById('osmosis-canvas');
+            if (!canvas) {
+                alert('Canvas not found!');
+                return;
+            }
+            
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = 400;
+            
+            let particles = [];
+            let animationId = null;
+            
+            // Stop any existing animation
+            if (window.currentOsmosisAnimation) {
+                cancelAnimationFrame(window.currentOsmosisAnimation);
+            }
+            
+            // Create particles - high concentration on left, low on right
+            // Add many solute particles on the LEFT side (high concentration)
+            for (let i = 0; i < 40; i++) {
+                particles.push({
+                    x: Math.random() * (canvas.width/2 - 40) + 20, // Left side only
+                    y: Math.random() * (canvas.height - 40) + 20,
+                    vx: (Math.random() - 0.5) * 3,
+                    vy: (Math.random() - 0.5) * 3,
+                    radius: 8,
+                    type: 'solute'
+                });
+            }
+            
+            // Add few solute particles on the RIGHT side (low concentration)
+            for (let i = 0; i < 5; i++) {
+                particles.push({
+                    x: Math.random() * (canvas.width/2 - 40) + canvas.width/2 + 20, // Right side only
+                    y: Math.random() * (canvas.height - 40) + 20,
+                    vx: (Math.random() - 0.5) * 3,
+                    vy: (Math.random() - 0.5) * 3,
+                    radius: 8,
+                    type: 'solute'
+                });
+            }
+            
+            function draw() {
+                // Clear canvas
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Draw background
+                ctx.fillStyle = '#f0f5ff';
+                ctx.fillRect(0, 0, canvas.width/2, canvas.height);
+                ctx.fillStyle = '#fff0f5';
+                ctx.fillRect(canvas.width/2, 0, canvas.width/2, canvas.height);
+                
+                // Add labels
+                ctx.fillStyle = '#333';
+                ctx.font = 'bold 16px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('High Concentration', canvas.width/4, 30);
+                ctx.fillText('Low Concentration', canvas.width * 3/4, 30);
+                
+                // Add legend
+                ctx.font = '14px Arial';
+                ctx.textAlign = 'left';
+                ctx.fillStyle = '#ff4444';
+                ctx.fillRect(10, canvas.height - 30, 15, 15);
+                ctx.fillStyle = '#333';
+                ctx.fillText('Solute molecules', 30, canvas.height - 18);
+                
+                // Add arrow to show expected water movement
+                ctx.font = '16px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillStyle = '#0066cc';
+                ctx.fillText('← Water flow (osmosis)', canvas.width/2, canvas.height - 15);
+                
+                // Show membrane type
+                ctx.font = '12px Arial';
+                ctx.fillStyle = '#666';
+                const memTypeText = {
+                    'semi': 'Semi-permeable membrane',
+                    'selective': 'Selectively permeable membrane',
+                    'impermeable': 'Impermeable membrane'
+                };
+                ctx.fillText(memTypeText[document.getElementById('permeability').value] || '', canvas.width/2, 55);
+                
+                // Draw membrane based on type
+                const membraneType = document.getElementById('permeability').value;
+                const memX = canvas.width/2;
+                
+                switch(membraneType) {
+                    case 'semi':
+                        // Semi-permeable: dotted line with regular pores
+                        ctx.fillStyle = '#333';
+                        ctx.fillRect(memX - 3, 0, 6, canvas.height);
+                        
+                        // Draw regular pores
+                        ctx.fillStyle = '#999';
+                        for (let y = 20; y < canvas.height; y += 40) {
+                            ctx.beginPath();
+                            ctx.arc(memX, y, 4, 0, Math.PI * 2);
+                            ctx.fill();
+                        }
+                        break;
+                        
+                    case 'selective':
+                        // Selectively permeable: solid with specific channels
+                        ctx.fillStyle = '#444';
+                        ctx.fillRect(memX - 3, 0, 6, canvas.height);
+                        
+                        // Draw selective channels (fewer, more structured)
+                        ctx.fillStyle = '#88f';
+                        for (let y = 50; y < canvas.height; y += 100) {
+                            ctx.fillRect(memX - 2, y - 10, 4, 20);
+                        }
+                        break;
+                        
+                    case 'impermeable':
+                        // Impermeable: thick solid barrier
+                        ctx.fillStyle = '#222';
+                        ctx.fillRect(memX - 5, 0, 10, canvas.height);
+                        
+                        // Add cross-hatch pattern to show it's impermeable
+                        ctx.strokeStyle = '#555';
+                        ctx.lineWidth = 1;
+                        for (let y = 0; y < canvas.height; y += 15) {
+                            ctx.beginPath();
+                            ctx.moveTo(memX - 5, y);
+                            ctx.lineTo(memX + 5, y + 10);
+                            ctx.stroke();
+                        }
+                        break;
+                }
+                
+                // Update and draw particles
+                particles.forEach(p => {
+                    // Get temperature and calculate kinetic energy factor
+                    const temperature = parseFloat(document.getElementById('temperature').value);
+                    const tempFactor = 0.3 + (temperature / 100) * 1.5; // Range from 0.3 to 1.8
+                    
+                    // Update velocity with temperature-dependent random motion
+                    p.vx += (Math.random() - 0.5) * tempFactor;
+                    p.vy += (Math.random() - 0.5) * tempFactor;
+                    
+                    // Apply damping (less damping at higher temperatures)
+                    const damping = 0.99 - (temperature / 1000); // Range from 0.99 to 0.94
+                    p.vx *= damping;
+                    p.vy *= damping;
+                    
+                    // Limit maximum velocity based on temperature
+                    const maxVel = 2 + (temperature / 20); // Max velocity increases with temperature
+                    p.vx = Math.max(-maxVel, Math.min(maxVel, p.vx));
+                    p.vy = Math.max(-maxVel, Math.min(maxVel, p.vy));
+                    
+                    // Update position
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    
+                    // Bounce off walls
+                    if (p.x <= p.radius || p.x >= canvas.width - p.radius) {
+                        p.vx = -p.vx;
+                        p.x = Math.max(p.radius, Math.min(canvas.width - p.radius, p.x));
+                    }
+                    if (p.y <= p.radius || p.y >= canvas.height - p.radius) {
+                        p.vy = -p.vy;
+                        p.y = Math.max(p.radius, Math.min(canvas.height - p.radius, p.y));
+                    }
+                    
+                    // Membrane interaction
+                    const memX = canvas.width/2;
+                    if (Math.abs(p.x - memX) < p.radius + 3) {
+                        const membraneType = document.getElementById('permeability').value;
+                        const temperature = parseFloat(document.getElementById('temperature').value);
+                        
+                        // Temperature affects crossing probability (higher temp = more kinetic energy)
+                        const tempBonus = temperature / 200; // 0 to 0.5 bonus based on temperature
+                        let crossChance = 0;
+                        
+                        // Different permeability for different membrane types
+                        switch(membraneType) {
+                            case 'semi':
+                                // Semi-permeable: base 30% + temperature bonus
+                                crossChance = 0.3 + tempBonus * 0.5;
+                                break;
+                            case 'selective':
+                                // Selectively permeable: base 10% + smaller temperature bonus
+                                crossChance = 0.1 + tempBonus * 0.3;
+                                break;
+                            case 'impermeable':
+                                // Impermeable: always 0% regardless of temperature
+                                crossChance = 0;
+                                break;
+                        }
+                        
+                        if (Math.random() < crossChance) {
+                            // Cross membrane
+                            p.x = p.x < memX ? memX + p.radius + 4 : memX - p.radius - 4;
+                        } else {
+                            // Bounce
+                            p.vx = -p.vx;
+                            p.x = p.x < memX ? memX - p.radius - 4 : memX + p.radius + 4;
+                        }
+                    }
+                    
+                    // Draw solute particle with motion blur at high temperatures
+                    const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+                    
+                    // Add slight transparency at high speeds/temperatures
+                    const alpha = temperature > 50 ? 0.8 : 1.0;
+                    
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255, 68, 68, ${alpha})`;
+                    ctx.fill();
+                    ctx.strokeStyle = `rgba(204, 0, 0, ${alpha})`;
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                    
+                    // Add motion trail at very high temperatures
+                    if (temperature > 70 && speed > 3) {
+                        ctx.strokeStyle = `rgba(255, 68, 68, 0.3)`;
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(p.x - p.vx * 2, p.y - p.vy * 2);
+                        ctx.stroke();
+                    }
+                });
+                
+                // Update stats
+                let leftSolute = 0, rightSolute = 0;
+                particles.forEach(p => {
+                    if (p.x < canvas.width/2) {
+                        leftSolute++;
+                    } else {
+                        rightSolute++;
+                    }
+                });
+                
+                document.getElementById('sim-time').textContent = ((Date.now() - startTime) / 1000).toFixed(1) + 's';
+                
+                // Show net movement based on concentration gradient
+                const concentrationDiff = leftSolute - rightSolute;
+                if (concentrationDiff > 5) {
+                    document.getElementById('net-movement').textContent = '← Water flows to high concentration';
+                } else if (concentrationDiff < -5) {
+                    document.getElementById('net-movement').textContent = 'Water flows to high concentration →';
+                } else {
+                    document.getElementById('net-movement').textContent = '↔ Near equilibrium';
+                }
+                
+                document.getElementById('equilibrium-status').textContent = 
+                    Math.abs(leftSolute - rightSolute) < 3 
+                    ? 'Equilibrium reached' 
+                    : `Left: ${leftSolute} molecules, Right: ${rightSolute} molecules`;
+                    
+                document.getElementById('osmosis-rate').textContent = 
+                    `Gradient: ${Math.abs(concentrationDiff)} | Temp: ${document.getElementById('temperature').value}°C`;
+                
+                // Continue animation
+                window.currentOsmosisAnimation = requestAnimationFrame(draw);
+            }
+            
+            const startTime = Date.now();
+            draw();
+        }
+        
+        // Simple working test
+        function testStartSimulation() {
+            console.log('=== STARTING SIMPLE TEST ===');
+            const canvas = document.getElementById('osmosis-canvas');
+            if (!canvas) {
+                console.error('NO CANVAS FOUND!');
+                return;
+            }
+            
+            const ctx = canvas.getContext('2d');
+            canvas.width = 800;
+            canvas.height = 400;
+            
+            // Track simulation start time
+            const startTime = Date.now();
+            
+            console.log('Canvas ready:', canvas.width, 'x', canvas.height);
+            
+            // Stop any existing animation
+            if (window.testAnimationId) {
+                cancelAnimationFrame(window.testAnimationId);
+            }
+            
+            let testParticles = [];
+            
+            // Get concentrations from sliders
+            const leftConc = parseInt(document.getElementById('conc-left-slider')?.value || 80);
+            const rightConc = parseInt(document.getElementById('conc-right-slider')?.value || 20);
+            
+            // Calculate number of particles based on concentration
+            const leftSoluteCount = Math.floor(leftConc / 5); // Scale down for visualization
+            const rightSoluteCount = Math.floor(rightConc / 5);
+            
+            // Create solute particles (red) - based on left concentration
+            for (let i = 0; i < leftSoluteCount; i++) {
+                testParticles.push({
+                    x: Math.random() * (canvas.width/2 - 40) + 20,
+                    y: Math.random() * (canvas.height - 100) + 50,
+                    vx: (Math.random() - 0.5) * 2,
+                    vy: (Math.random() - 0.5) * 2,
+                    radius: 8,
+                    color: '#e74c3c',
+                    type: 'solute'
+                });
+            }
+            
+            // Create solute particles (red) - based on right concentration
+            for (let i = 0; i < rightSoluteCount; i++) {
+                testParticles.push({
+                    x: Math.random() * (canvas.width/2 - 40) + canvas.width/2 + 20,
+                    y: Math.random() * (canvas.height - 100) + 50,
+                    vx: (Math.random() - 0.5) * 2,
+                    vy: (Math.random() - 0.5) * 2,
+                    radius: 8,
+                    color: '#e74c3c',
+                    type: 'solute'
+                });
+            }
+            
+            // Create water molecules (blue) - distributed throughout
+            for (let i = 0; i < 50; i++) {
+                testParticles.push({
+                    x: Math.random() * (canvas.width - 40) + 20,
+                    y: Math.random() * (canvas.height - 100) + 50,
+                    vx: (Math.random() - 0.5) * 3,
+                    vy: (Math.random() - 0.5) * 3,
+                    radius: 5,
+                    color: '#3498db',
+                    type: 'water'
+                });
+            }
+            
+            console.log('Created', testParticles.length, 'test particles');
+            console.log('Sample particle:', testParticles[0]);
+            
+            function simpleAnimate() {
+                // Clear
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Draw background regions
+                ctx.fillStyle = '#e6f2ff';
+                ctx.fillRect(0, 0, canvas.width/2, canvas.height);
+                ctx.fillStyle = '#ffe6f0';
+                ctx.fillRect(canvas.width/2, 0, canvas.width/2, canvas.height);
+                
+                // Add labels with concentration values
+                ctx.fillStyle = '#333';
+                ctx.font = 'bold 16px Arial';
+                ctx.textAlign = 'center';
+                const leftConcVal = document.getElementById('conc-left-slider')?.value || 80;
+                const rightConcVal = document.getElementById('conc-right-slider')?.value || 20;
+                ctx.fillText(`Left Side (${leftConcVal}mM)`, canvas.width/4, 30);
+                ctx.fillText(`Right Side (${rightConcVal}mM)`, canvas.width * 3/4, 30);
+                
+                // Store membrane info for particle collision
+                const membraneX = canvas.width/2;
+                const membraneType = document.getElementById('permeability') ? document.getElementById('permeability').value : 'semi';
+                
+                // Update and draw particles
+                console.log('Drawing', testParticles.length, 'particles');
+                testParticles.forEach((p, index) => {
+                    if (index === 0) console.log('First particle at:', p.x, p.y);
+                    
+                    // Get temperature and speed from controls
+                    const temperature = parseFloat(document.getElementById('temperature')?.value || 37);
+                    const animationSpeed = parseFloat(document.getElementById('speed')?.value || 1);
+                    
+                    // Temperature affects molecular motion (kinetic energy)
+                    const tempFactor = 0.2 + (temperature / 100) * 0.8; // 0.2 to 1.0 range
+                    
+                    // Add random motion (Brownian movement) affected by temperature
+                    p.vx += (Math.random() - 0.5) * 0.5 * tempFactor;
+                    p.vy += (Math.random() - 0.5) * 0.5 * tempFactor;
+                    
+                    // Apply damping to prevent runaway velocities (less damping at higher temp)
+                    const damping = 0.96 - (temperature / 500); // 0.96 to 0.94
+                    p.vx *= damping;
+                    p.vy *= damping;
+                    
+                    // Update position with animation speed multiplier
+                    p.x += p.vx * animationSpeed;
+                    p.y += p.vy * animationSpeed;
+                    
+                    // Bounce off walls
+                    if (p.x < p.radius || p.x > canvas.width - p.radius) {
+                        p.vx = -p.vx;
+                        p.x = Math.max(p.radius, Math.min(canvas.width - p.radius, p.x));
+                    }
+                    if (p.y < p.radius || p.y > canvas.height - p.radius) {
+                        p.vy = -p.vy;
+                        p.y = Math.max(p.radius, Math.min(canvas.height - p.radius, p.y));
+                    }
+                    
+                    // Osmosis physics: water moves toward higher solute concentration
+                    if (p.type === 'water') {
+                        // Calculate particles on each side
+                        const leftSolutes = testParticles.filter(particle => 
+                            particle.type === 'solute' && particle.x < membraneX).length;
+                        const rightSolutes = testParticles.filter(particle => 
+                            particle.type === 'solute' && particle.x > membraneX).length;
+                        const leftWater = testParticles.filter(particle => 
+                            particle.type === 'water' && particle.x < membraneX).length;
+                        const rightWater = testParticles.filter(particle => 
+                            particle.type === 'water' && particle.x > membraneX).length;
+                        
+                        // Calculate water-to-solute ratios
+                        const leftRatio = leftSolutes > 0 ? leftWater / leftSolutes : Infinity;
+                        const rightRatio = rightSolutes > 0 ? rightWater / rightSolutes : Infinity;
+                        
+                        // Check if equilibrium is reached (ratios are approximately equal)
+                        const isEquilibrium = Math.abs(leftRatio - rightRatio) < 0.5;
+                        
+                        // Water moves toward higher solute concentration (lower water-to-solute ratio)
+                        if (!isEquilibrium) {
+                            const osmoticForce = 0.1 * animationSpeed;
+                            if (leftRatio > rightRatio) {
+                                p.vx += osmoticForce; // Move right (toward higher concentration)
+                            } else if (rightRatio > leftRatio) {
+                                p.vx += -osmoticForce; // Move left (toward higher concentration)
+                            }
+                        }
+                        // If equilibrium is reached, no net movement (no velocity bias added)
+                        
+                        // Water can cross semi-permeable membrane
+                        if (Math.abs(p.x - membraneX) < p.radius + 5) {
+                            if (membraneType === 'semi') {
+                                // Water crosses freely
+                                if (Math.random() < 0.7) {
+                                    p.x = p.x < membraneX ? membraneX + p.radius + 6 : membraneX - p.radius - 6;
+                                }
+                            } else {
+                                // Impermeable: bounce off
+                                p.vx = -p.vx;
+                                p.x = p.x < membraneX ? membraneX - p.radius - 6 : membraneX + p.radius + 6;
+                            }
+                        }
+                    } else if (p.type === 'solute') {
+                        // Solute particles cannot cross semi-permeable membrane
+                        if (Math.abs(p.x - membraneX) < p.radius + 5) {
+                            if (membraneType === 'semi') {
+                                // Solutes bounce off semi-permeable membrane
+                                p.vx = -p.vx;
+                                p.x = p.x < membraneX ? membraneX - p.radius - 6 : membraneX + p.radius + 6;
+                            } else {
+                                // Impermeable: also bounce off
+                                p.vx = -p.vx;
+                                p.x = p.x < membraneX ? membraneX - p.radius - 6 : membraneX + p.radius + 6;
+                            }
+                        }
+                    }
+                    
+                    // Draw particle with type-specific styling
+                    ctx.save();
+                    ctx.fillStyle = p.color;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Add visible border
+                    ctx.strokeStyle = p.type === 'water' ? '#1e5a8e' : '#8b0000';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                    ctx.restore();
+                });
+                
+                // Draw membrane AFTER particles so it's visible on top
+                console.log('Drawing membrane:', membraneType, 'at x:', membraneX);
+                
+                if (membraneType === 'semi') {
+                    // Semi-permeable membrane with pores
+                    ctx.fillStyle = '#555';
+                    ctx.fillRect(membraneX - 3, 0, 6, canvas.height);
+                    console.log('Drew semi-permeable membrane');
+                    
+                    // Draw pores
+                    ctx.fillStyle = '#999';
+                    for (let y = 20; y < canvas.height; y += 40) {
+                        ctx.beginPath();
+                        ctx.arc(membraneX, y, 4, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                    console.log('Drew pores');
+                } else {
+                    // Impermeable membrane
+                    ctx.fillStyle = '#222';
+                    ctx.fillRect(membraneX - 5, 0, 10, canvas.height);
+                    console.log('Drew impermeable membrane');
+                    
+                    // Cross-hatch pattern
+                    ctx.strokeStyle = '#555';
+                    ctx.lineWidth = 1;
+                    for (let y = 0; y < canvas.height; y += 15) {
+                        ctx.beginPath();
+                        ctx.moveTo(membraneX - 5, y);
+                        ctx.lineTo(membraneX + 5, y + 10);
+                        ctx.stroke();
+                    }
+                    console.log('Drew cross-hatch pattern');
+                }
+                
+                // Add legend for particle types AFTER drawing particles
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'left';
+                ctx.fillStyle = '#3498db';
+                ctx.beginPath();
+                ctx.arc(15, canvas.height - 45, 6, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#333';
+                ctx.fillText('Water molecules (H₂O)', 25, canvas.height - 40);
+                
+                ctx.fillStyle = '#e74c3c';
+                ctx.beginPath();
+                ctx.arc(15, canvas.height - 25, 6, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#333';
+                ctx.fillText('Solute particles (blocked by membrane)', 25, canvas.height - 20);
+                
+                // Update equilibrium status
+                const leftSoluteCount = testParticles.filter(p => p.type === 'solute' && p.x < membraneX).length;
+                const rightSoluteCount = testParticles.filter(p => p.type === 'solute' && p.x > membraneX).length;
+                const leftWaterCount = testParticles.filter(p => p.type === 'water' && p.x < membraneX).length;
+                const rightWaterCount = testParticles.filter(p => p.type === 'water' && p.x > membraneX).length;
+                
+                // Calculate water-to-solute ratios
+                const leftRatio = leftSoluteCount > 0 ? leftWaterCount / leftSoluteCount : Infinity;
+                const rightRatio = rightSoluteCount > 0 ? rightWaterCount / rightSoluteCount : Infinity;
+                
+                // Check equilibrium
+                const isEquilibrium = Math.abs(leftRatio - rightRatio) < 0.5;
+                
+                // Update time
+                const elapsedTime = (Date.now() - startTime) / 1000;
+                const timeElement = document.getElementById('sim-time');
+                if (timeElement) {
+                    timeElement.textContent = elapsedTime.toFixed(1) + 's';
+                }
+                
+                // Update displays
+                const equilibriumElement = document.getElementById('equilibrium-status');
+                if (equilibriumElement) {
+                    if (isEquilibrium) {
+                        equilibriumElement.textContent = 'Reached';
+                        equilibriumElement.style.color = '#22c55e'; // Green
+                    } else {
+                        equilibriumElement.textContent = 'Not reached';
+                        equilibriumElement.style.color = '#e74c3c'; // Red
+                    }
+                }
+                
+                // Update net movement indicator
+                const netMovementElement = document.getElementById('net-movement');
+                if (netMovementElement) {
+                    if (isEquilibrium) {
+                        netMovementElement.textContent = '↔ (No net movement)';
+                    } else if (leftRatio > rightRatio) {
+                        netMovementElement.textContent = '→ (To right)';
+                    } else {
+                        netMovementElement.textContent = '← (To left)';
+                    }
+                }
+                
+                // Update osmosis rate
+                const osmosisRate = document.getElementById('osmosis-rate');
+                if (osmosisRate) {
+                    const concentrationDiff = Math.abs(leftSoluteCount - rightSoluteCount);
+                    osmosisRate.textContent = `Gradient: ${concentrationDiff} | W:S Left: ${leftRatio.toFixed(1)} Right: ${rightRatio.toFixed(1)}`;
+                }
+                
+                // Display equilibrium status on canvas
+                if (isEquilibrium) {
+                    ctx.font = 'bold 18px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillStyle = '#22c55e';
+                    ctx.fillText('EQUILIBRIUM REACHED', canvas.width/2, 80);
+                    ctx.font = '14px Arial';
+                    ctx.fillText('No net water movement', canvas.width/2, 100);
+                }
+                
+                // Continue animation - ALWAYS keep running
+                window.testAnimationId = requestAnimationFrame(simpleAnimate);
+            }
+            
+            simpleAnimate();
+            console.log('=== SIMPLE TEST STARTED ===');
+        }
+        
+        // Professional osmosis simulation (backup)
+        function fullOsmosisSimulation() {
+            console.log('Starting professional osmosis simulation');
+            const canvas = document.getElementById('osmosis-canvas');
+            if (!canvas) {
+                console.error('Canvas not found!');
+                return;
+            }
+            
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth || 800;
+            canvas.height = 400;
+            
+            console.log('Canvas size:', canvas.width, 'x', canvas.height);
+            
+            // Cancel any existing animation
+            if (window.simAnimationId) {
+                cancelAnimationFrame(window.simAnimationId);
+            }
+            
+            let particles = [];
+            
+            // Get concentrations from slider controls
+            const leftConc = parseFloat(document.getElementById('conc-left-slider').value) || 80;
+            const rightConc = parseFloat(document.getElementById('conc-right-slider').value) || 20;
+            const soluteType = document.getElementById('solute-type').value;
+            
+            console.log('Concentrations:', leftConc, 'mM left,', rightConc, 'mM right');
+            console.log('Solute type:', soluteType);
+            
+            // Calculate number of particles based on concentration
+            const leftSoluteCount = Math.max(1, Math.floor(leftConc / 3));
+            const rightSoluteCount = Math.max(1, Math.floor(rightConc / 3));
+            
+            // Determine particle properties based on solute type
+            let soluteRadius, soluteColor, soluteStroke;
+            switch(soluteType) {
+                case 'salt':
+                    soluteRadius = 6;
+                    soluteColor = '#e74c3c';
+                    soluteStroke = '#c0392b';
+                    break;
+                case 'glucose':
+                    soluteRadius = 8;
+                    soluteColor = '#f39c12';
+                    soluteStroke = '#d68910';
+                    break;
+                case 'protein':
+                    soluteRadius = 12;
+                    soluteColor = '#8e44ad';
+                    soluteStroke = '#7d3c98';
+                    break;
+                default:
+                    soluteRadius = 8;
+                    soluteColor = '#e74c3c';
+                    soluteStroke = '#c0392b';
+            }
+            
+            // Create solute molecules - LEFT side based on concentration
+            for (let i = 0; i < leftSoluteCount; i++) {
+                particles.push({
+                    x: Math.random() * (canvas.width/2 - 40) + 20,
+                    y: Math.random() * (canvas.height - 40) + 20,
+                    vx: (Math.random() - 0.5) * 2,
+                    vy: (Math.random() - 0.5) * 2,
+                    radius: soluteRadius,
+                    color: soluteColor,
+                    stroke: soluteStroke,
+                    type: 'solute',
+                    soluteType: soluteType
+                });
+            }
+            
+            // Create solute molecules - RIGHT side based on concentration
+            for (let i = 0; i < rightSoluteCount; i++) {
+                particles.push({
+                    x: Math.random() * (canvas.width/2 - 40) + canvas.width/2 + 20,
+                    y: Math.random() * (canvas.height - 40) + 20,
+                    vx: (Math.random() - 0.5) * 2,
+                    vy: (Math.random() - 0.5) * 2,
+                    radius: soluteRadius,
+                    color: soluteColor,
+                    stroke: soluteStroke,
+                    type: 'solute',
+                    soluteType: soluteType
+                });
+            }
+            
+            // Create water molecules (small) - distributed on both sides
+            for (let i = 0; i < 40; i++) {
+                const side = Math.random() < 0.5 ? 'left' : 'right';
+                const x = side === 'left' 
+                    ? Math.random() * (canvas.width/2 - 30) + 15
+                    : Math.random() * (canvas.width/2 - 30) + canvas.width/2 + 15;
+                
+                particles.push({
+                    x: x,
+                    y: Math.random() * (canvas.height - 30) + 15,
+                    vx: (Math.random() - 0.5) * 3,
+                    vy: (Math.random() - 0.5) * 3,
+                    radius: 4,
+                    type: 'water'
+                });
+            }
+            
+            function animate() {
+                console.log('Animate function called, particles:', particles.length);
+                // Clear
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Draw backgrounds
+                ctx.fillStyle = '#e6f2ff';
+                ctx.fillRect(0, 0, canvas.width/2, canvas.height);
+                ctx.fillStyle = '#ffe6f0';
+                ctx.fillRect(canvas.width/2, 0, canvas.width/2, canvas.height);
+                
+                // Add labels with actual concentrations
+                ctx.fillStyle = '#333';
+                ctx.font = 'bold 16px Arial';
+                ctx.textAlign = 'center';
+                const leftConc = parseFloat(document.getElementById('conc-left-slider').value) || 80;
+                const rightConc = parseFloat(document.getElementById('conc-right-slider').value) || 20;
+                ctx.fillText(`${leftConc} mM Solute`, canvas.width/4, 30);
+                ctx.fillText(`${rightConc} mM Solute`, canvas.width * 3/4, 30);
+                
+                // Add legend
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'left';
+                const currentSoluteType = document.getElementById('solute-type').value;
+                const soluteTypeNames = {
+                    'salt': 'Salt (NaCl)',
+                    'glucose': 'Glucose',
+                    'protein': 'Protein'
+                };
+                
+                // Get current solute color
+                let legendColor = '#e74c3c';
+                switch(currentSoluteType) {
+                    case 'salt': legendColor = '#e74c3c'; break;
+                    case 'glucose': legendColor = '#f39c12'; break;
+                    case 'protein': legendColor = '#8e44ad'; break;
+                }
+                
+                ctx.fillStyle = legendColor;
+                ctx.fillRect(10, canvas.height - 50, 12, 12);
+                ctx.fillStyle = '#333';
+                ctx.fillText(`${soluteTypeNames[currentSoluteType]} (cannot cross)`, 25, canvas.height - 40);
+                
+                ctx.fillStyle = '#3498db';
+                ctx.fillRect(10, canvas.height - 30, 8, 8);
+                ctx.fillStyle = '#333';
+                ctx.fillText('Water (can cross)', 25, canvas.height - 22);
+                
+                // Draw membrane with visual indication
+                const membraneType = document.getElementById('permeability').value;
+                ctx.fillStyle = membraneType === 'semi' ? '#555' : '#222';
+                ctx.fillRect(canvas.width/2 - 3, 0, 6, canvas.height);
+                
+                // Draw membrane pores for semi-permeable
+                if (membraneType === 'semi') {
+                    ctx.fillStyle = '#999';
+                    for (let y = 20; y < canvas.height; y += 40) {
+                        ctx.beginPath();
+                        ctx.arc(canvas.width/2, y, 3, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
+                
+                // Add membrane type label
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillStyle = '#666';
+                const membraneLabel = membraneType === 'semi' ? 'Semi-permeable membrane' : 'Impermeable membrane';
+                ctx.fillText(membraneLabel, canvas.width/2, 55);
+                
+                // Update and draw particles
+                particles.forEach(p => {
+                    // Get temperature and speed effects
+                    const temperature = parseFloat(document.getElementById('temperature').value);
+                    const animationSpeed = parseFloat(document.getElementById('speed').value) || 1;
+                    const tempFactor = 0.2 + (temperature / 100) * 0.8; // 0.2 to 1.0 based on temperature
+                    
+                    // Update velocity with temperature-dependent motion
+                    p.vx += (Math.random() - 0.5) * tempFactor * animationSpeed;
+                    p.vy += (Math.random() - 0.5) * tempFactor * animationSpeed;
+                    
+                    // Apply damping (less at higher temperatures)
+                    const damping = 0.98 - (temperature / 2000); // 0.98 to 0.93
+                    p.vx *= damping;
+                    p.vy *= damping;
+                    
+                    // Update position with speed multiplier
+                    p.x += p.vx * animationSpeed;
+                    p.y += p.vy * animationSpeed;
+                    
+                    // Bounce off walls
+                    if (p.x < p.radius || p.x > canvas.width - p.radius) {
+                        p.vx = -p.vx;
+                        p.x = Math.max(p.radius, Math.min(canvas.width - p.radius, p.x));
+                    }
+                    if (p.y < p.radius || p.y > canvas.height - p.radius) {
+                        p.vy = -p.vy;
+                        p.y = Math.max(p.radius, Math.min(canvas.height - p.radius, p.y));
+                    }
+                    
+                    // Realistic membrane interaction
+                    const membraneX = canvas.width/2;
+                    if (Math.abs(p.x - membraneX) < p.radius + 3) {
+                        const membraneType = document.getElementById('permeability').value;
+                        let canCross = false;
+                        
+                        if (membraneType === 'semi') {
+                            // Semi-permeable: water can pass freely, solute cannot
+                            canCross = p.type === 'water';
+                        } else if (membraneType === 'impermeable') {
+                            // Impermeable: nothing can pass
+                            canCross = false;
+                        }
+                        
+                        if (canCross) {
+                            // Cross membrane freely
+                            p.x = p.x < membraneX ? membraneX + p.radius + 4 : membraneX - p.radius - 4;
+                        } else {
+                            // Bounce off membrane
+                            p.vx = -p.vx;
+                            p.x = p.x < membraneX ? membraneX - p.radius - 4 : membraneX + p.radius + 4;
+                        }
+                    }
+                    
+                    // Draw particles with different colors based on type
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    
+                    if (p.type === 'solute') {
+                        // Solute molecules with type-specific colors
+                        ctx.fillStyle = p.color;
+                        ctx.fill();
+                        ctx.strokeStyle = p.stroke;
+                        ctx.lineWidth = 2;
+                        ctx.stroke();
+                        
+                        // Add label for larger proteins
+                        if (p.soluteType === 'protein') {
+                            ctx.fillStyle = '#fff';
+                            ctx.font = '8px Arial';
+                            ctx.textAlign = 'center';
+                            ctx.fillText('P', p.x, p.y + 2);
+                        }
+                    } else {
+                        // Small blue water molecules
+                        ctx.fillStyle = '#3498db';
+                        ctx.fill();
+                        ctx.strokeStyle = '#2980b9';
+                        ctx.lineWidth = 1;
+                        ctx.stroke();
+                    }
+                });
+                
+                // Update statistics
+                let leftSolute = 0, rightSolute = 0;
+                let leftWater = 0, rightWater = 0;
+                
+                particles.forEach(p => {
+                    if (p.x < canvas.width/2) {
+                        if (p.type === 'solute') leftSolute++;
+                        else leftWater++;
+                    } else {
+                        if (p.type === 'solute') rightSolute++;
+                        else rightWater++;
+                    }
+                });
+                
+                // Update displays
+                const timeSinceStart = (Date.now() - startTime) / 1000;
+                document.getElementById('sim-time').textContent = timeSinceStart.toFixed(1) + 's';
+                
+                // Show water movement direction (osmosis)
+                if (leftWater > rightWater + 2) {
+                    document.getElementById('net-movement').textContent = '← Water flows to left';
+                } else if (rightWater > leftWater + 2) {
+                    document.getElementById('net-movement').textContent = 'Water flows to right →';
+                } else {
+                    document.getElementById('net-movement').textContent = '↔ Equilibrium';
+                }
+                
+                // Calculate actual concentrations (particles * 2 to convert back to mM)
+                const leftActualConc = leftSolute * 2;
+                const rightActualConc = rightSolute * 2;
+                
+                // Show current concentrations
+                document.getElementById('equilibrium-status').textContent = 
+                    `Left: ${leftActualConc}mM (${leftSolute}S/${leftWater}W) | Right: ${rightActualConc}mM (${rightSolute}S/${rightWater}W)`;
+                
+                // Calculate concentration gradient
+                const gradient = Math.abs(leftActualConc - rightActualConc);
+                document.getElementById('osmosis-rate').textContent = 
+                    `Gradient: ${gradient}mM | Temp: ${document.getElementById('temperature').value}°C`;
+                
+                // Check if equilibrium is reached
+                if (gradient < 5) {
+                    document.getElementById('equilibrium-status').style.color = '#22c55e';
+                    document.getElementById('net-movement').textContent = '↔ Equilibrium reached';
+                } else {
+                    document.getElementById('equilibrium-status').style.color = '#333';
+                }
+                
+                // Continue
+                window.simAnimationId = requestAnimationFrame(animate);
+            }
+            
+            console.log('Created', particles.length, 'particles');
+            console.log('Starting animation loop...');
+            
+            // Test draw a circle to ensure canvas is working
+            ctx.fillStyle = 'red';
+            ctx.beginPath();
+            ctx.arc(100, 100, 20, 0, Math.PI * 2);
+            ctx.fill();
+            console.log('Drew test circle');
+            
+            const startTime = Date.now();
+            animate();
+        }
+        
+        // Reset simulation function
+        function resetOsmosisSimulation() {
+            console.log('Resetting osmosis simulation');
+            
+            // Stop current animation
+            if (window.testAnimationId) {
+                cancelAnimationFrame(window.testAnimationId);
+                window.testAnimationId = null;
+            }
+            if (window.simAnimationId) {
+                cancelAnimationFrame(window.simAnimationId);
+                window.simAnimationId = null;
+            }
+            if (window.currentOsmosisAnimation) {
+                cancelAnimationFrame(window.currentOsmosisAnimation);
+                window.currentOsmosisAnimation = null;
+            }
+            
+            // Reset displays
+            document.getElementById('sim-time').textContent = '0s';
+            document.getElementById('net-movement').textContent = '→';
+            document.getElementById('equilibrium-status').textContent = 'Not reached';
+            document.getElementById('equilibrium-status').style.color = '#e74c3c'; // Reset to red
+            document.getElementById('osmosis-rate').textContent = '0 molecules/s';
+            
+            // Clear canvas and draw initial state
+            const canvas = document.getElementById('osmosis-canvas');
+            if (canvas) {
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Draw initial background
+                ctx.fillStyle = '#e6f2ff';
+                ctx.fillRect(0, 0, canvas.width/2, canvas.height);
+                ctx.fillStyle = '#ffe6f0';
+                ctx.fillRect(canvas.width/2, 0, canvas.width/2, canvas.height);
+                
+                // Draw labels
+                ctx.fillStyle = '#333';
+                ctx.font = 'bold 16px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('Left Side', canvas.width/4, 30);
+                ctx.fillText('Right Side', canvas.width * 3/4, 30);
+                
+                // Draw membrane
+                ctx.fillStyle = '#555';
+                ctx.fillRect(canvas.width/2 - 3, 0, 6, canvas.height);
+                
+                // Draw instruction
+                ctx.fillStyle = '#666';
+                ctx.font = '16px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('Click "Start Simulation" to begin', canvas.width/2, canvas.height/2);
+                
+                // Clear any existing particles
+                if (window.testParticles) {
+                    window.testParticles = [];
+                }
+            }
+        }
+        
+        // Add event listeners for new controls
+        document.addEventListener('DOMContentLoaded', function() {
+            // Concentration sliders
+            const leftSlider = document.getElementById('conc-left-slider');
+            const rightSlider = document.getElementById('conc-right-slider');
+            const leftDisplay = document.getElementById('conc-left-display');
+            const rightDisplay = document.getElementById('conc-right-display');
+            
+            if (leftSlider && leftDisplay) {
+                leftSlider.addEventListener('input', function() {
+                    leftDisplay.textContent = this.value + ' mM';
+                });
+            }
+            
+            if (rightSlider && rightDisplay) {
+                rightSlider.addEventListener('input', function() {
+                    rightDisplay.textContent = this.value + ' mM';
+                });
+            }
+            
+            // Temperature slider
+            const tempSlider = document.getElementById('temperature');
+            const tempDisplay = document.getElementById('temp-display');
+            if (tempSlider && tempDisplay) {
+                tempSlider.addEventListener('input', function() {
+                    tempDisplay.textContent = this.value + '°C';
+                });
+            }
+            
+            // Speed slider
+            const speedSlider = document.getElementById('speed');
+            const speedDisplay = document.getElementById('speed-display');
+            if (speedSlider && speedDisplay) {
+                speedSlider.addEventListener('input', function() {
+                    speedDisplay.textContent = this.value + 'x';
+                });
+            }
+        });
+    </script>
 </body>
 </html>
